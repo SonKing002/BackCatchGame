@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -8,11 +8,11 @@ using UnityEngine.UI;
 using System.Diagnostics.CodeAnalysis;
 
 /// <summary>
-/// PopÀ» ±×·ìÈ­ÇÒ Class·Î ¹Ş±â À§ÇÑ BaseÅ¬·¡½º
+/// Popì„ ê·¸ë£¹í™”í•  Classë¡œ ë°›ê¸° ìœ„í•œ Baseí´ë˜ìŠ¤
 /// </summary>
 public class PopUpBaseUI : BaseUI<PopUpBaseUI>
 {
-    #region ÀçÁ¤ÀÇ ÇÁ·ÎÆÛÆ¼
+    #region  í”„ë¡œí¼í‹°
     public override int SortOrder { get => _sortOrder; set { } }
     public override Canvas Canvas { get => _myCanvas; set { }  }
     public override bool IsEnable { get => _myCanvas.enabled; set { } }
@@ -20,37 +20,49 @@ public class PopUpBaseUI : BaseUI<PopUpBaseUI>
     public override Action<PopUpBaseUI> off { get =>_off; set { } }
     #endregion
 
-    #region ³»ºÎº¯¼ö (protected:»ó¼Ó¸¸ »ç¿ë)
+    #region ë‚´ë¶€ë³€ìˆ˜ (protected:ìƒì†ë§Œ ì‚¬ìš©)
 
-    protected int _sortOrder = 0;//¼ÒÆÃ ¼ø¼­
+    protected int _sortOrder = 0;//ì†ŒíŒ… ìˆœì„œ
     protected Canvas _myCanvas;
 
     protected Action<PopUpBaseUI> _on;
     protected Action<PopUpBaseUI> _off;
     #endregion
 
+    protected virtual void Awake()
+    {
+        _myCanvas = this.GetComponent<Canvas>();
+    }
 
     /// <summary>
-    /// PopUIBase¿¡¼­ º¸¿©ÁÖ´Â °ÍÀº Ãß°¡ÇÑ´Ù
+    /// PopUIBaseì—ì„œ ë³´ì—¬ì£¼ëŠ” ê²ƒì€ ì¶”ê°€í•œë‹¤ == ì‹¤í–‰ : Pushìœ¼ë¡œ ì¶”ê°€
     /// </summary>
     public override void CanvasShow()
     {
         Switching(false);
         UIManager.Instance.uis.Push(this);
-        //_on?.Invoke(invoke);
+        UIManager.Instance.uiList.Add(UIManager.Instance.uis.ToArray()[UIManager.Instance.uis.Count - 1]);
+        //print(this.gameObject.name);
+        //Debug.Log($"+1 : {UIManager.Instance.uis.Count}");
     }
 
     /// <summary>
-    /// PopUIBase¿¡¼­ ¼û±â´Â °ÍÀº PopÀ¸·Î »©ÁØ´Ù.
+    /// PopUIBaseì—ì„œ ìˆ¨ê¸°ëŠ” ê²ƒì€ == íŒì—… ì°½ ì¢…ë£Œ : Popìœ¼ë¡œ ë¹¼ì¤€ë‹¤.
     /// </summary>
     public override void CavasHide()
     {
         Switching(true);
+
+        //ë¹¼ë‚´ê¸° ì¡°ê±´ ì²˜ë¦¬
+        if (UIManager.Instance.uis.Count <= 0)
+            return;
+
         UIManager.Instance.uis.Pop();
+        UIManager.Instance.uiList.RemoveAt(UIManager.Instance.uis.Count);
     }
 
     /// <summary>
-    /// ÀÏ°ıÃ³¸®ÇÏ±â À§ÇÔ
+    /// ì¼ê´„ì²˜ë¦¬í•˜ê¸° ìœ„í•¨
     /// </summary>
     /// <param name="isTrue"></param>
     public override void Switching(bool isTrue)
@@ -64,15 +76,13 @@ public class PopUpBaseUI : BaseUI<PopUpBaseUI>
                 _myCanvas.enabled = true;
                 break;
         }
-        
     }
 
     /// <summary>
-    /// Äİ¹é¿¡¼­ÀÇ °¢ ½ÇÇàÇÒ ³»¿ëÀ» ´ãÀ» ÇÔ¼ö
+    /// ì½œë°±ì—ì„œì˜ ê° ì‹¤í–‰í•  ë‚´ìš©ì„ ë‹´ì„ í•¨ìˆ˜
     /// </summary>
     public virtual void InputAct() 
     {
-        print("¾å");
     }
 
 }

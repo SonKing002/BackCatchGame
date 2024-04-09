@@ -1,15 +1,11 @@
-﻿using JH.UIManager;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 
-public class PopUpLoginUI : PopUpBaseUI
+public class PopupRegisterUI : PopUpBaseUI
 {
     public string id { get => _idInputField.text; set { } }
     public string pw { get => _pwInputField.text; set { } }
@@ -19,41 +15,32 @@ public class PopUpLoginUI : PopUpBaseUI
     [SerializeField]
     private TMP_InputField _pwInputField;//비밀번호 입력
 
-   
-    /// <summary>
-    /// 로그인 버튼
-    /// </summary>
-    [SerializeField]
-    private Button _loginButton;
-
     /// <summary>
     /// 회원가입 버튼
     /// </summary>
     [SerializeField]
     private Button _RegisterButton;
-    [SerializeField]
-    private PopupRegisterUI _registerUI;
 
+    private bool _isConditionSatisfied;
 
     /// <summary>
-    /// 버튼 AddListener
+    /// AddListener 등록 클릭시 실행 함수
     /// </summary>
-    public void OnClickButton_Login()
-    {
-        id = _idInputField.text;
-        pw = _pwInputField.text;
-
-        print($"id: {id} : pw: {pw}");
-    }
     public void OnClickButton_Register()
     {
-        _registerUI.CanvasShow();
+        CheckConditionToRegist();
     }
 
-    public override void InputAct()
+    public void CheckConditionToRegist()
     {
-        base.InputAct();
-
+        if (string.IsNullOrEmpty(_idInputField.text) || string.IsNullOrWhiteSpace(_idInputField.text))
+        {
+            print(PopUpInformWindowsUI.Instance.obj.name);
+            PopUpInformWindowsUI.Instance.CanvasShow();
+            PopUpInformWindowsUI.Instance.CheckUp(false,"아이디 입력이 빈칸 또는 공란입니다");
+            return;
+        }
     }
+
 }
 
