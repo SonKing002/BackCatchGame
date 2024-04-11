@@ -40,6 +40,13 @@ public class PopupRegisterUI : PopUpBaseUI
             PopUpInformWindowsUI.Instance.CheckUp(false,"입력이 빈칸 또는 공란입니다");
             return;
         }
+        if (string.IsNullOrEmpty(pwText) || string.IsNullOrWhiteSpace(pwText))
+        {
+            print(PopUpInformWindowsUI.Instance.obj.name);
+            PopUpInformWindowsUI.Instance.CanvasShow();
+            PopUpInformWindowsUI.Instance.CheckUp(false, "입력이 빈칸 또는 공란입니다");
+            return;
+        }
     }
 
     
