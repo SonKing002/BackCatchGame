@@ -14,6 +14,7 @@ public class PopUpInputFieldBaseUI : PopUpBaseUI
     #region 입력창 2개에 대한 프로퍼티
     public string idInputField { get => _idInputField.text; set { } }
     public string pwInputField { get => _pwInputField.text; set { } }
+    public bool isSuccess { get => _isSuccess; set { } }
     #endregion
 
     #region 내부변수 (protected)
@@ -26,6 +27,7 @@ public class PopUpInputFieldBaseUI : PopUpBaseUI
     protected TMP_InputField _pwInputField;//비밀번호
     [SerializeField]
     protected Button _confirmButton;
+    protected bool _isSuccess;
     #endregion
 
     /// <summary>
@@ -33,7 +35,7 @@ public class PopUpInputFieldBaseUI : PopUpBaseUI
     /// </summary>
     public virtual void OnClickButton_Link() 
     {
-        //파생 클래스의 각각의 OnClickButton_Link 함수를 활용, 해당 코드 블럭 내부에 호출해서 실행하면 됌
+        //파생 클래스의 각각의 OnClickButton_Link 함수를 활용, (해당 코드 블럭 내부에 호출하고, 확장사용가능)
         CheckCondition(_idInputField.text, _pwInputField.text);
     }
 
@@ -52,9 +54,9 @@ public class PopUpInputFieldBaseUI : PopUpBaseUI
         }
 
         #region 아이디 검사
-        //아이디 형식 검사항목
-        Regex regexIDRull1 = new Regex("@");
-        Match match1 = regexIDRull1.Match(idText);
+        //이메일 형식 검사항목
+        Regex regexRull = new Regex("@");
+        Match match1 = regexRull.Match(idText);
 
         //이메일 형식이 아니라면
         if (match1.Success == false)
@@ -64,29 +66,36 @@ public class PopUpInputFieldBaseUI : PopUpBaseUI
         }
 
         //아이디부분이 비어있다면
-        string[] vals = regexIDRull1.Split(idText);
+        string[] vals = regexRull.Split(idText);
         if (vals[0].Length <= 0)
         {
             print($"아이디 앞부분 : {vals[0]}");
             PopUpInformWindowsUI.Instance.ERROR_WrongFormID();
         }
+
+        //숫자문자 입력 검사항목
+        string ourPattern = "^[a-zA-Z0-9]";//문자나 숫자
+        regexRull = new Regex(ourPattern);
+        if (regexRull.IsMatch(idText)==false)
+        {
+            PopUpInformWindowsUI.Instance.ERROR_WrongFormID2();
+            return;
+        }
         #endregion
 
         #region 패스워드 검사
 
-        //글자수 >= 4
-        if (pwText.Length <= 3)
+        //글자수 >= 4, 숫자랑 문자만 입력 가능
+        if (pwText.Length <= 3 || regexRull.IsMatch(pwText)==false)
         {
             PopUpInformWindowsUI.Instance.ERROR_WrongFormPW();
             return;
         }
 
-        //숫자 + 영문 
-        foreach (char val in pwText)
+        if (regexRull.IsMatch(pwText) == false)
         {
-            bool isText = (65 <= val && val <= 90) || (97 <= val && val <= 121);
-            bool isNum;
-
+            PopUpInformWindowsUI.Instance.ERROR_WrongFormPW2();
+            return;
         }
         #endregion
 

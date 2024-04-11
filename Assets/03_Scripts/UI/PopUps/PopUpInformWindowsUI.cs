@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
-
-
-
+/// <summary>
+/// 알림용 UI 클래스
+/// </summary>
 public class PopUpInformWindowsUI : PopUpBaseUI
 {
 
@@ -44,9 +45,14 @@ public class PopUpInformWindowsUI : PopUpBaseUI
     }
     #endregion
 
+    public Button confirmButton { get => _confirmButton; }
+    
+
     [SerializeField]
     private bool isTrue;
 
+
+    #region 색상 목록 직렬화 노출용 리스트
     [Header("경고창 색상")]
     [SerializeField]
     private Color _warningShieldColor = new Color(0, 15, 38, 203);
@@ -79,15 +85,18 @@ public class PopUpInformWindowsUI : PopUpBaseUI
     [SerializeField]
     private Image _backShield;//배경 안눌리기 하기 위함
     [SerializeField]
-    private Image _backGround;
+    private Image _backGround;//백이미지
     [SerializeField]
-    private TMP_Text _titleText;
+    private TMP_Text _titleText;//제목
     [SerializeField]
-    private TMP_Text _bodyText;
+    private TMP_Text _bodyText;//내용
     [SerializeField]
-    private Shadow _shodowImage;
+    private Shadow _shodowImage;//백이미지 그림자
     [SerializeField]
-    private Image _buttonImage;
+    private Image _buttonImage;//버튼의 이미지
+    [SerializeField]
+    private Button _confirmButton;//버튼 (특정상황: Action리스너 필요)
+    #endregion
 
     /*
     public void Update()
@@ -99,6 +108,15 @@ public class PopUpInformWindowsUI : PopUpBaseUI
     public override void InputAct()
     {
         //미정
+    }
+
+    /// <summary>
+    /// 사용하기 전 미리 리셋정리 함수
+    /// </summary>
+    public void MessageReset()
+    {
+        _titleText.text = "";
+        _bodyText.text = "";
     }
 
     /// <summary>
@@ -116,6 +134,7 @@ public class PopUpInformWindowsUI : PopUpBaseUI
                 break;
             case false://경고용
                 WarningColor();
+                
                 MessageTitle("경고 :");
                 break;
         }
@@ -180,6 +199,7 @@ public class PopUpInformWindowsUI : PopUpBaseUI
     public void ERROR_EmptyInputID()
     {
         CanvasShow();
+        MessageReset();
         MessageType(false);
         MessageTitle("아이디 입력 오류");
         MessageBody("아이디 입력이 빈칸 또는 공란입니다");
@@ -191,6 +211,7 @@ public class PopUpInformWindowsUI : PopUpBaseUI
     public void ERROR_EmptyInputPW()
     {
         CanvasShow();
+        MessageReset();
         MessageType(false);
         MessageTitle("비밀번호 입력 오류");
         MessageBody("비밀번호 입력이 빈칸 또는 공란입니다");
@@ -202,9 +223,18 @@ public class PopUpInformWindowsUI : PopUpBaseUI
     public void ERROR_WrongFormID()
     {
         CanvasShow(); 
+        MessageReset();
         MessageType(false);
         MessageTitle("아이디 입력 오류");
         MessageBody("아이디만 존재합니다 \n '아이디 + @이메일주소' 형식으로 작성해주세요");
+    }
+    public void ERROR_WrongFormID2()
+    {
+        CanvasShow();
+        MessageReset();
+        MessageType(false);
+        MessageTitle("아이디 입력 오류");
+        MessageBody("아이디가 잘못 되었습니다. \n 아이디는 문자 나 숫자로만 입력이 가능합니다");
     }
 
     /// <summary>
@@ -213,9 +243,36 @@ public class PopUpInformWindowsUI : PopUpBaseUI
     public void ERROR_WrongFormPW() 
     {
         CanvasShow(); 
+        MessageReset();
         MessageType(false);
         MessageTitle("비밀번호 입력 오류");
-        MessageBody("비밀번호는 3~15자이어야 하며, \n 사이의 숫자 + 영문자를 입력할 수 있습니다");
+        MessageBody("비밀번호는 3~15자이어야 합니다");
+    }
+
+    /// <summary>
+    /// 잘못된 비밀번호 입력형식2
+    /// </summary>
+    public void ERROR_WrongFormPW2()
+    {
+        CanvasShow();
+        MessageReset();
+        MessageType(false);
+        MessageTitle("비밀번호 입력 오류");
+        MessageBody("비밀번호는 \'숫자 + 영문자\'만 입력할 수 있습니다");
+    }
+
+    /// <summary>
+    /// 성공 내용 작성 함수
+    /// </summary>
+    /// <param name="title">제목</param>
+    /// <param name="body">내용</param>
+    public void Success_Inform(string title, string body)
+    {
+        CanvasShow();
+        MessageReset();
+        MessageType(true);
+        MessageTitle(title);
+        MessageBody(body);
     }
     #endregion
 }
