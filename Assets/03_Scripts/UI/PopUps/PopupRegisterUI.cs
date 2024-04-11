@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class PopupRegisterUI : PopUpBaseUI
+public class PopUpRegisterUI : PopUpBaseUI
 {
     public string id { get => _idInputField.text; set { } }
     public string pw { get => _pwInputField.text; set { } }
@@ -28,26 +28,9 @@ public class PopupRegisterUI : PopUpBaseUI
     /// </summary>
     public void OnClickButton_Register()
     {
-        CheckConditionToRegist(_idInputField.text, _pwInputField.text);
+
     }
 
-    public void CheckConditionToRegist(string idText,string pwText)
-    {
-        if (string.IsNullOrEmpty(idText) || string.IsNullOrWhiteSpace(idText))
-        {
-            print(PopUpInformWindowsUI.Instance.obj.name);
-            PopUpInformWindowsUI.Instance.CanvasShow();
-            PopUpInformWindowsUI.Instance.CheckUp(false,"입력이 빈칸 또는 공란입니다");
-            return;
-        }
-        if (string.IsNullOrEmpty(pwText) || string.IsNullOrWhiteSpace(pwText))
-        {
-            print(PopUpInformWindowsUI.Instance.obj.name);
-            PopUpInformWindowsUI.Instance.CanvasShow();
-            PopUpInformWindowsUI.Instance.CheckUp(false, "입력이 빈칸 또는 공란입니다");
-            return;
-        }
-    }
 
     
 }

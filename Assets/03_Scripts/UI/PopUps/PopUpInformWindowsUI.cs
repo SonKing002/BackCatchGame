@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -103,23 +104,39 @@ public class PopUpInformWindowsUI : PopUpBaseUI
     /// <summary>
     /// 안내창 컬러 결정
     /// </summary>
-    /// <param name="isTrue">true일 때 알림종류 분기</param>
-    /// <param name="text">알릴 메세지</param>
-    public void CheckUp(bool isTrue, string text)
+    /// <param name="isFine">true일 때 알림종류 분기</param>
+    /// <param name="bodyText">알릴 메세지</param>
+    public void MessageType(bool isFine)
     {
-        switch (isTrue)
+        switch (isFine)
         {
             case true://알림용
                 InformingColor();
-                _titleText.text = "확인";
-                _bodyText.text = text;
+                MessageTitle("알림 :");
                 break;
             case false://경고용
                 WarningColor();
-                _titleText.text = "경고";
-                _bodyText.text = text;
+                MessageTitle("경고 :");
                 break;
         }
+    }
+
+    /// <summary>
+    /// 여러번 중복되는 코드를 줄이고자 따로 작성한 함수 : 제목
+    /// </summary>
+    /// <param name="titleText">제목</param>
+    public void MessageTitle(string titleText)
+    {
+        _titleText.text += titleText;
+    }
+
+    /// <summary>
+    /// 여러번 중복되는 코드를 줄이고자 따로 작성한 함수 : 내용
+    /// </summary>
+    /// <param name="bodyText">내용</param>
+    public void MessageBody(string bodyText)
+    {
+        _bodyText.text += bodyText;
     }
 
     /// <summary>
@@ -155,5 +172,51 @@ public class PopUpInformWindowsUI : PopUpBaseUI
         CavasHide();
     }
 
+    #region 상황별 에러들을 정리한 함수 탬플릿
+
+    /// <summary>
+    /// 아이디 공란
+    /// </summary>
+    public void ERROR_EmptyInputID()
+    {
+        CanvasShow();
+        MessageType(false);
+        MessageTitle("아이디 입력 오류");
+        MessageBody("아이디 입력이 빈칸 또는 공란입니다");
+    }
+
+    /// <summary>
+    /// 비밀번호 공란
+    /// </summary>
+    public void ERROR_EmptyInputPW()
+    {
+        CanvasShow();
+        MessageType(false);
+        MessageTitle("비밀번호 입력 오류");
+        MessageBody("비밀번호 입력이 빈칸 또는 공란입니다");
+    }
+
+    /// <summary>
+    /// 잘못된 아이디 입력형식 
+    /// </summary>
+    public void ERROR_WrongFormID()
+    {
+        CanvasShow(); 
+        MessageType(false);
+        MessageTitle("아이디 입력 오류");
+        MessageBody("아이디만 존재합니다 \n '아이디 + @이메일주소' 형식으로 작성해주세요");
+    }
+
+    /// <summary>
+    /// 잘못된 비밀번호 입력형식
+    /// </summary>
+    public void ERROR_WrongFormPW() 
+    {
+        CanvasShow(); 
+        MessageType(false);
+        MessageTitle("비밀번호 입력 오류");
+        MessageBody("비밀번호는 3~15자이어야 하며, \n 사이의 숫자 + 영문자를 입력할 수 있습니다");
+    }
+    #endregion
 }
 

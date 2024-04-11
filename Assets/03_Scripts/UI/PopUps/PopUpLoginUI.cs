@@ -32,7 +32,7 @@ public class PopUpLoginUI : PopUpBaseUI
     [SerializeField]
     private Button _RegisterButton;
     [SerializeField]
-    private PopupRegisterUI _registerUI;
+    private PopUpRegisterUI _registerUI;
 
 
     /// <summary>
