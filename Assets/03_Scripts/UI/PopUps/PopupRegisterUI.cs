@@ -28,19 +28,20 @@ public class PopupRegisterUI : PopUpBaseUI
     /// </summary>
     public void OnClickButton_Register()
     {
-        CheckConditionToRegist();
+        CheckConditionToRegist(_idInputField.text, _pwInputField.text);
     }
 
-    public void CheckConditionToRegist()
+    public void CheckConditionToRegist(string idText,string pwText)
     {
-        if (string.IsNullOrEmpty(_idInputField.text) || string.IsNullOrWhiteSpace(_idInputField.text))
+        if (string.IsNullOrEmpty(idText) || string.IsNullOrWhiteSpace(idText))
         {
             print(PopUpInformWindowsUI.Instance.obj.name);
             PopUpInformWindowsUI.Instance.CanvasShow();
-            PopUpInformWindowsUI.Instance.CheckUp(false,"아이디 입력이 빈칸 또는 공란입니다");
+            PopUpInformWindowsUI.Instance.CheckUp(false,"입력이 빈칸 또는 공란입니다");
             return;
         }
     }
 
+    
 }
 
