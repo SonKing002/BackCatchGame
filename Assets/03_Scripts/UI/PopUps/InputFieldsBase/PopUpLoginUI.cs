@@ -19,7 +19,6 @@ public class PopUpLoginUI : PopUpBaseUI
     [SerializeField]
     private TMP_InputField _pwInputField;//비밀번호 입력
 
-   
     /// <summary>
     /// 로그인 버튼
     /// </summary>

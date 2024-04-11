@@ -50,8 +50,8 @@ namespace JH.UIManager
             else
             { 
                 sortingNum = uis.Count;
+                print(uis.Peek().gameObject.name + $" 내가 선택한 : {sortingNum}");
             }
-            print(uis.Peek().gameObject.name + $" 내가 선택한 : {sortingNum}");
             canvas.sortingOrder = sortingNum;
         }
 
