@@ -36,21 +36,21 @@ public class PopUpInputFieldBaseUI : PopUpBaseUI
     public virtual void OnClickButton_Link() 
     {
         //파생 클래스의 각각의 OnClickButton_Link 함수를 활용, (해당 코드 블럭 내부에 호출하고, 확장사용가능)
-        CheckCondition(_idInputField.text, _pwInputField.text);
+        _isSuccess = CheckCondition(_idInputField.text, _pwInputField.text);
     }
 
-    public void CheckCondition(string idText, string pwText)
+    public bool CheckCondition(string idText, string pwText)
     {
         //빈 공간이라면,
         if (string.IsNullOrEmpty(idText) || string.IsNullOrWhiteSpace(idText))
         {
             PopUpInformWindowsUI.Instance.ERROR_EmptyInputID();
-            return;
+            return false;
         }
         if (string.IsNullOrEmpty(pwText) || string.IsNullOrWhiteSpace(pwText))
         {
             PopUpInformWindowsUI.Instance.ERROR_EmptyInputPW();
-            return;
+            return false;
         }
 
         #region 아이디 검사
@@ -62,7 +62,7 @@ public class PopUpInputFieldBaseUI : PopUpBaseUI
         if (match1.Success == false)
         {
             PopUpInformWindowsUI.Instance.ERROR_WrongFormID();
-            return;
+            return false;
         }
 
         //아이디부분이 비어있다면
@@ -79,7 +79,7 @@ public class PopUpInputFieldBaseUI : PopUpBaseUI
         if (regexRull.IsMatch(idText)==false)
         {
             PopUpInformWindowsUI.Instance.ERROR_WrongFormID2();
-            return;
+            return false;
         }
         #endregion
 
@@ -89,16 +89,16 @@ public class PopUpInputFieldBaseUI : PopUpBaseUI
         if (pwText.Length <= 3 || regexRull.IsMatch(pwText)==false)
         {
             PopUpInformWindowsUI.Instance.ERROR_WrongFormPW();
-            return;
+            return false;
         }
 
         if (regexRull.IsMatch(pwText) == false)
         {
             PopUpInformWindowsUI.Instance.ERROR_WrongFormPW2();
-            return;
+            return false;
         }
+        return true;
         #endregion
-
     }
 
 }
