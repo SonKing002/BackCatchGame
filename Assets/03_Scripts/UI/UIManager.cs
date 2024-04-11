@@ -39,5 +39,21 @@ namespace JH.UIManager
             
         }
 
+        public void ReSortingOrder(Canvas canvas)
+        {
+            int sortingNum = -1;
+            if (uis.Count <= 0)
+            {
+                sortingNum = 0;
+
+            }
+            else
+            { 
+                sortingNum = uis.Count;
+            }
+            print(uis.Peek().gameObject.name + $" 내가 선택한 : {sortingNum}");
+            canvas.sortingOrder = sortingNum;
+        }
+
     }
 }

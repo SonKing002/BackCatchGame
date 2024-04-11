@@ -39,9 +39,10 @@ public class PopUpBaseUI : BaseUI<PopUpBaseUI>
     /// </summary>
     public override void CanvasShow()
     {
-        Switching(false);
-        UIManager.Instance.uis.Push(this);
-        UIManager.Instance.uiList.Add(UIManager.Instance.uis.ToArray()[UIManager.Instance.uis.Count - 1]);
+        Switching(false);//false일 때, 이 함수로 true 스위치
+        UIManager.Instance.uis.Push(this);//추가
+        UIManager.Instance.uiList.Add(UIManager.Instance.uis.ToArray()[UIManager.Instance.uis.Count - 1]);//인스펙터 확인용
+        UIManager.Instance.ReSortingOrder(this._myCanvas);//순서 재정렬
         //print(this.gameObject.name);
         //Debug.Log($"+1 : {UIManager.Instance.uis.Count}");
     }
@@ -51,14 +52,15 @@ public class PopUpBaseUI : BaseUI<PopUpBaseUI>
     /// </summary>
     public override void CavasHide()
     {
-        Switching(true);
+        Switching(true);//true일 때, 이 함수로 false 스위치
 
         //빼내기 조건 처리
         if (UIManager.Instance.uis.Count <= 0)
             return;
 
-        UIManager.Instance.uis.Pop();
-        UIManager.Instance.uiList.RemoveAt(UIManager.Instance.uis.Count);
+        UIManager.Instance.uis.Pop();//제거
+        UIManager.Instance.uiList.RemoveAt(UIManager.Instance.uis.Count);//인스펙터 확인용
+        UIManager.Instance.ReSortingOrder(this._myCanvas);//순서 재정렬
     }
 
     /// <summary>
@@ -83,6 +85,7 @@ public class PopUpBaseUI : BaseUI<PopUpBaseUI>
     /// </summary>
     public virtual void InputAct() 
     {
+
     }
 
 }
