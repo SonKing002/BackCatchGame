@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Diagnostics.CodeAnalysis;
+using JH;
 
 /// <summary>
 /// Pop을 그룹화할 Class로 받기 위한 Base클래스
@@ -37,7 +38,7 @@ public class PopUpBaseUI : BaseUI<PopUpBaseUI>
     }
     public void Start()
     {
-        popUpUIManager = ManagerListSingleton.Instance.popUpUIManager;//캐싱
+        popUpUIManager = Manager.Instance.popUpUIManager;//캐싱
     }
 
     /// <summary>
