@@ -14,19 +14,14 @@ namespace MJ.Player
         //인스펙터에서 등록할 inputActionAsset
         public InputActionAsset inputActionAsset;
         //입력값을 저장
-        private Vector2 _inputMoveValue;
-
-        private Vector2 _touchStartposition;
-        private Vector3 _touchChechStartPosition;
-        private Vector2 _touchEndPosition;
         //중력
-        [SerializeField] private float _gravity = -9.8f;
+        [SerializeField] private float _gravity;
         //플레이어 앞뒤 움직임 속도
-        [SerializeField] private float _moveSpeed = 4.0f;
+        [SerializeField] private float _moveSpeed;
         //플레이어 회전 속도
-        [SerializeField] private float _rotateSpeed = 4.0f;
+        [SerializeField] private float _rotateSpeed;
         //플레이어 점프력
-        [SerializeField] private float _jumpPower = 2.0f;
+        [SerializeField] private float _jumpPower;
         //지면에 닿는 거리
         [SerializeField] private float _groundDistance;
         private bool isGrounded;
@@ -37,12 +32,11 @@ namespace MJ.Player
         private float verticalVelocity;
         //OnTouch pc테스트용 TODO 변경 필요
         private bool OnTouching = false;
-        //
-        //private Vector3 _inputValue;
-        //private Vector3 _inputValueY;
-        //
+        //클릭 할 때 저장할 포지션을 저장할 곳
         private Vector3 _startPosition;
+        //실시간으로 업데이트 받는 현재 마우스 위치를 저장할 곳
         private Vector3 _currentPosition;
+        //그 두 벡터값을 뺀 벡터값을 저장할 곳
         private Vector3 _direction;
 
 
@@ -57,39 +51,36 @@ namespace MJ.Player
             //이동
             Move();
             //회전
-            Rotate(_direction.normalized.y);
-            //현재 마우스 포지션 
+            Rotate(-_direction.normalized.x);
+            //현재 마우스 포지션 갱신
             currentPostision();
         }
         
         private void currentPostision()
         {
+            //마우스 포지션
             _currentPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z);
-            Debug.Log($"touchstartposition : {_startPosition}, currentposition{_currentPosition}");
         }
         //좌우의 회전을 관리하는 함수.
         private void Rotate(float input)
         {
             transform.localRotation *= Quaternion.Euler(0f, input * _rotateSpeed * Time.deltaTime, 0f);
+            Debug.Log(input);
         }
         //캐릭터의 움직임을 관리하는 함수
         private void Move()
         {
             //바닥에 레이캐스트를 쏜다.(지상 확인용)
             isGrounded = Physics.Raycast(transform.position, Vector3.down, _groundDistance, groundLayer);
-            //Debug.Log("isGrounded: " + isGrounded);
             if (OnTouching)
             {
                 //이동할 방향
                 _direction = _startPosition - _currentPosition;
                 //지역변수 초기화
                 Vector3 move = Vector3.zero;
-                //move +=
-                //    ((transform.right * _inputMoveValue.x) + (transform.forward * _inputMoveValue.y)).normalized * _moveSpeed; 
                 //지역 변수에 방향 값을 넣음
                 move +=
                     (-(transform.right * _direction.x) + -(transform.forward * _direction.y)).normalized * _moveSpeed;
-                //Debug.Log(move);
                 //점프 안할 때는 중력X
                 if (isGrounded && verticalVelocity < 0)
                 {
@@ -112,10 +103,6 @@ namespace MJ.Player
                 verticalVelocity = _jumpPower;
             }
         }
-        //public void OnMove(InputAction.CallbackContext context)
-        //{
-        //    _inputMoveValue = context.ReadValue<Vector2>();
-        //}
         public void OnJump(InputAction.CallbackContext contexts)
         {
             //정확하게 눌렀을 때
@@ -126,6 +113,7 @@ namespace MJ.Player
         }
         public void OnClick(InputAction.CallbackContext context)
         {
+            //눌렀을 때
             if (context.started)
             {
                 if (OnTouching)
@@ -133,22 +121,15 @@ namespace MJ.Player
                     return;
                 }
                 OnTouching = true;
-                Debug.Log("시작함");
-                //마우스 포지션의 xyz값을 지정한다.
+                //클릭 시작 시 마우스 포지션의 xyz값을 지정한다.
                 _startPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z);
-                Debug.Log($"touchstartposition : {_startPosition}, endposition{_currentPosition}");
 
             }
-            if (context.performed)
-            {
-                Debug.Log($"OnTouching:{OnTouching}");
-            }
+            //땠을 때
             if (context.canceled)
             {
                 OnTouching = false;
-                Debug.Log($"touchstartposition : {_startPosition}, endposition{_currentPosition}");
-                Debug.Log($"OnTouching:{OnTouching}");
-
+                //direction값을 초기화 시켜줌
                 _direction = Vector3.zero;
             }
         }
