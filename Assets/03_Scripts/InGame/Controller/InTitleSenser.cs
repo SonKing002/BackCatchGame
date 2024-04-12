@@ -2,21 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InTitleSensor : SingletonOfT<InTitleSensor>
+public class InTitleSensor : MonoBehaviour
 {
-    [SerializeField]
-    //private Transform[] transform;
-
-
-    private void Awake()
-    {
-        base.Awake();
-
-        DontDestroyOnLoad(this);
-    }
-
-    void Update()
-    {
-        
-    }
+  
 }
