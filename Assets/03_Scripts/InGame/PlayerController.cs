@@ -37,7 +37,14 @@ public class PlayerController : MonoBehaviour
     private float verticalVelocity;
     //OnTouch pc테스트용 TODO 변경 필요
     private bool OnTouching = false;
-
+    //
+    //private Vector3 _inputValue;
+    //private Vector3 _inputValueY;
+    //
+    private Vector3 _startPosition;
+    private Vector3 _currentPosition;
+    
+    
 
     private void Awake()
     {   
@@ -46,9 +53,9 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        Move();
-        //Rotate(_inputMoveValue.x);
-        Debug.DrawRay(transform.position, Vector3.down, Color.red, _groundDistance);
+       Move();
+       Rotate(_inputMoveValue.x);
+       Debug.DrawRay(transform.position, Vector3.down, Color.red, _groundDistance);
     }
 
     //좌우의 회전을 관리하는 함수.
@@ -61,8 +68,11 @@ public class PlayerController : MonoBehaviour
     {
         isGrounded = Physics.Raycast(transform.position, Vector3.down, _groundDistance, groundLayer);
         Debug.Log("isGrounded: " + isGrounded);
-        Vector3 move = new Vector3(transform.right.z * _inputMoveValue.x, 0, transform.forward.z * _inputMoveValue.y).normalized * _moveSpeed;
-        Debug.Log(move);
+        //Vector3 move = new Vector3(transform.right.z* _inputMoveValue.x , 0, transform.forward.x * _inputMoveValue.y).normalized * _moveSpeed;
+        Vector3 move = Vector3.zero;
+        move +=
+            ((transform.right  * _inputMoveValue.x)  + (transform.forward * _inputMoveValue.y)).normalized * _moveSpeed;
+        //Debug.Log(move);
         if (isGrounded && verticalVelocity < 0)
         {
             verticalVelocity = 0;  
@@ -93,21 +103,27 @@ public class PlayerController : MonoBehaviour
             Jump();
         }
     }
-    public void OnTouch(InputAction.CallbackContext context)
+    public void OnClick(InputAction.CallbackContext context)
     {
         if (context.started)
         {
-
+            if (OnTouching)
+            {
+                return;
+            }
+            OnTouching = true;
             Debug.Log("시작함");
-            _touchStartposition = context.ReadValue<Vector3>();
-
-            //_touchChechStartPosition = new Vector3(_touchStartposition.x, 0, _touchChechStartPosition.y);
+            _touchStartposition = context.ReadValue<Vector2>();
         }
         if (context.performed)
         {
             _touchEndPosition = context.ReadValue<Vector3>();
 
             Debug.Log($"touchstartposition : {_touchStartposition}, endposition{_touchEndPosition}");
+        }
+        if (context.canceled)
+        {
+            OnTouching = false;
         }
     }
 }

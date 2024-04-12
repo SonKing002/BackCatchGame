@@ -205,7 +205,7 @@
                     "path": "<Touchscreen>/primaryTouch/tap",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Touch",
                     "action": "Touch",
                     "isComposite": false,
                     "isPartOfComposite": false
