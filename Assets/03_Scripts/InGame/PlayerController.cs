@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.XR;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,6 +15,10 @@ public class PlayerController : MonoBehaviour
     public InputActionAsset inputActionAsset;
     //입력값을 저장
     private Vector2 _inputMoveValue;
+
+    private Vector2 _touchStartposition;
+    private Vector3 _touchChechStartPosition;
+    private Vector2 _touchEndPosition;
     //중력
     [SerializeField] private float _gravity = -9.8f;
     //플레이어 앞뒤 움직임 속도
@@ -30,8 +35,9 @@ public class PlayerController : MonoBehaviour
     private CharacterController _characterController;
     //수평 중력
     private float verticalVelocity;
+    //OnTouch pc테스트용 TODO 변경 필요
+    private bool OnTouching = false;
 
-    Vector3 moveDirection;
 
     private void Awake()
     {   
@@ -41,7 +47,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         Move();
-        Rotate(_inputMoveValue.x);
+        //Rotate(_inputMoveValue.x);
         Debug.DrawRay(transform.position, Vector3.down, Color.red, _groundDistance);
     }
 
@@ -55,9 +61,8 @@ public class PlayerController : MonoBehaviour
     {
         isGrounded = Physics.Raycast(transform.position, Vector3.down, _groundDistance, groundLayer);
         Debug.Log("isGrounded: " + isGrounded);
-
-        Vector3 move = new Vector3(_inputMoveValue.x, 0, _inputMoveValue.y) * _moveSpeed;
-
+        Vector3 move = new Vector3(transform.right.z * _inputMoveValue.x, 0, transform.forward.z * _inputMoveValue.y).normalized * _moveSpeed;
+        Debug.Log(move);
         if (isGrounded && verticalVelocity < 0)
         {
             verticalVelocity = 0;  
@@ -86,6 +91,23 @@ public class PlayerController : MonoBehaviour
         if (contexts.performed)
         {
             Jump();
+        }
+    }
+    public void OnTouch(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+
+            Debug.Log("시작함");
+            _touchStartposition = context.ReadValue<Vector3>();
+
+            //_touchChechStartPosition = new Vector3(_touchStartposition.x, 0, _touchChechStartPosition.y);
+        }
+        if (context.performed)
+        {
+            _touchEndPosition = context.ReadValue<Vector3>();
+
+            Debug.Log($"touchstartposition : {_touchStartposition}, endposition{_touchEndPosition}");
         }
     }
 }
