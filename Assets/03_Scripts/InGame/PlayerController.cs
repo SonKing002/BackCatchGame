@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     //입력값을 저장
     private Vector2 _inputMoveValue;
     //중력
-    [SerializeField]private float _gravity = -9.8f;
+    [SerializeField] private float _gravity = -9.8f;
     //플레이어 앞뒤 움직임 속도
     [SerializeField] private float _moveSpeed = 4.0f;
     //플레이어 회전 속도
