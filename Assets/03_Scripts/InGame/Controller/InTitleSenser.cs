@@ -5,7 +5,7 @@ using UnityEngine;
 public class InTitleSensor : SingletonOfT<InTitleSensor>
 {
     [SerializeField]
-    private Transform[] transform;
+    //private Transform[] transform;
 
 
     private void Awake()
