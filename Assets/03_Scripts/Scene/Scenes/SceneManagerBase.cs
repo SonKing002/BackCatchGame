@@ -12,10 +12,10 @@ public  class SceneManagerBase : MonoBehaviour
 {
 
     /// <summary>
-    /// 할당이 필요한 객체들을 초기화하는 bucket역할 Awake함수
+    /// 할당이 필요한 객체들을 초기화하는 bucket역할
     /// </summary>
     /// <returns>True == 성공 / False == 실패</returns>
-    public virtual bool AssignInstancesWhenAwake()
+    public virtual bool AssignInstances()
     {
         /* 추가설명
         처음 씬을 부를 때, 초기화가 필요할 때 이 함수를 override 할것 (씬마다 필요한 작업물 담는 함수)
@@ -25,10 +25,10 @@ public  class SceneManagerBase : MonoBehaviour
     }
 
     /// <summary>
-    /// 설정이 필요한 값들을 초기화하는 bucket역할 Start함수
+    /// 설정이 필요한 값들을 초기화하는 bucket역할
     /// </summary>
     /// <returns>True == 성공 / False == 실패</returns>
-    public virtual bool InitValuesSetWhenStart()
+    public virtual bool InitValuesSet()
     {
         /* 추가설명
         처음 씬을 부를 때, 값을 캐싱해야한다면, 이 함수를 override 할것 (씬마다 필요한 작업물 담는 함수)

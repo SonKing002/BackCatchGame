@@ -17,7 +17,7 @@ public class Manager : SingletonOfT<Manager>
     [Header("Scene")]
     [SerializeField]
     private List<SceneManagerBase> _managerScipts;
-
+    
     [Header("UI")]
     [SerializeField]
     private PopUpUIManager _popUpUIManager;
