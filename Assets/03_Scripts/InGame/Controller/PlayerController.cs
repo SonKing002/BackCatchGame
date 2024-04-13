@@ -65,36 +65,33 @@ namespace MJ.Player
         private void Rotate(float input)
         {
             transform.localRotation *= Quaternion.Euler(0f, input * _rotateSpeed * Time.deltaTime, 0f);
-            Debug.Log(input);
         }
         //캐릭터의 움직임을 관리하는 함수
         private void Move()
         {
             //바닥에 레이캐스트를 쏜다.(지상 확인용)
             isGrounded = Physics.Raycast(transform.position, Vector3.down, _groundDistance, groundLayer);
+            Vector3 move = Vector3.zero;
             if (OnTouching)
             {
                 //이동할 방향
                 _direction = _startPosition - _currentPosition;
-                //지역변수 초기화
-                Vector3 move = Vector3.zero;
                 //지역 변수에 방향 값을 넣음
                 move +=
                     (-(transform.right * _direction.x) + -(transform.forward * _direction.y)).normalized * _moveSpeed;
-                //점프 안할 때는 중력X
-                if (isGrounded && verticalVelocity < 0)
-                {
-                    verticalVelocity = 0;
-                }
-                else
-                {
-                    //점프 할 때는 중력 포함
-                    verticalVelocity -= _gravity * Time.deltaTime;
-                }
-                move.y = verticalVelocity;
-                //캐릭터 이동 함수
-                _characterController.Move(move * Time.deltaTime);
             }
+            if (isGrounded && verticalVelocity < 0)
+            {
+                verticalVelocity = 0;
+            }
+            else
+            {
+                //점프 할 때는 중력 포함
+                verticalVelocity -= _gravity * Time.deltaTime;
+            }
+            move.y = verticalVelocity;
+            //캐릭터 이동 함수
+            _characterController.Move(move * Time.deltaTime);
         }
         private void Jump()
         {
@@ -123,7 +120,6 @@ namespace MJ.Player
                 OnTouching = true;
                 //클릭 시작 시 마우스 포지션의 xyz값을 지정한다.
                 _startPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z);
-
             }
             //땠을 때
             if (context.canceled)
