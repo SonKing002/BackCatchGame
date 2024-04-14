@@ -4,63 +4,50 @@ using UnityEngine;
 
 public class CrushManagement : MonoBehaviour
 {
-    [SerializeField] private float _viewAngle;
-    [SerializeField] private float _viewDistance;
-    [SerializeField] private LayerMask targetMask;
+    //벌어지는 각도(등 판정 체크를 위함
+    [SerializeField][Range(0f, 360f)] float _viewAngle;
+    //등 판정 체크할 거리
+    [SerializeField] float _distance;
+    //체크 할 적 레이어 마스크
+    [SerializeField] LayerMask _enemyMask;
+    
+    [SerializeField] LayerMask _obstacleMask;
+
+    List<Collider> _hitTargetList = new List<Collider>();
 
     private void Update()
     {
-        View();
+     
     }
-    public Vector3 GetTargetPos()
+    private void OnDrawGizmos()
     {
-        return transform.position;
+        //내 포지션 체크
+        Vector3 myPosition = transform.position + Vector3.up * 0.5f;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(myPosition, _distance);
+
+        float lookingAngle = (transform.eulerAngles.y)+ 180;  //캐릭터가 바라보는 방향의 등 위치
+        Vector3 rightDir = AngleToDir(lookingAngle + _viewAngle * 0.5f);
+        Vector3 leftDir = AngleToDir(lookingAngle - _viewAngle * 0.5f);
+        Vector3 lookDir = AngleToDir(lookingAngle);
+
+        Debug.DrawRay(myPosition, rightDir * _distance, Color.black);
+        Debug.DrawRay(myPosition, leftDir * _distance, Color.black);
+        Debug.DrawRay(myPosition, lookDir * _distance, Color.yellow);
+
+        //리스트 내용을 전부 제거
+        _hitTargetList.Clear();
+
+        Collider[] Targets = Physics.OverlapSphere(myPosition, _distance, _enemyMask);
+
+        if (Targets.Length == 0) return;
     }
 
-    private Vector3 BoundaryAngle(float _angle)
+    //각도를 벡터값으로 바꿔주는 함수
+    Vector3 AngleToDir(float angle)
     {
-        //???
-        _angle += -transform.eulerAngles.y;
-        return new Vector3(Mathf.Sin(_angle * Mathf.Deg2Rad), 0f, Mathf.Cos(_angle * Mathf.Deg2Rad));
+        float radian = angle * Mathf.Deg2Rad;
+        return new Vector3(Mathf.Sin(radian), 0f, Mathf.Cos(radian));
     }
 
-    public bool View()
-    {
-        //좌측 경계선
-        Vector3 _leftBoundary = BoundaryAngle(-_viewAngle * 0.5f);
-        //우측 경계선
-        Vector3 _rightBoundary = BoundaryAngle(_viewAngle * 0.5f);
-
-        //직접 좌측 우측 그리기
-        Debug.DrawRay(transform.position + transform.up , _leftBoundary, Color.red);
-        Debug.DrawRay(transform.position + transform.up , _rightBoundary, Color.red);
-
-        Collider[] _target = Physics.OverlapSphere(transform.position, _viewDistance, targetMask);
-
-        for (int i = 0; i < _target.Length; i++)
-        {
-            Transform _targetTf = _target[i].transform;
-            if (_targetTf.name == "Player")
-            {
-                Vector3 _direction = (_targetTf.position - transform.position).normalized;
-                float _angle = Vector3.Angle(_direction, transform.forward);
-
-                if (_angle < _viewAngle * 0.5f)
-                {
-
-                    if (Physics.Raycast(transform.position + transform.up + transform.forward, _direction, out RaycastHit _hit, _viewDistance))
-                    {
-                        Debug.Log(_hit);
-                        if (_hit.transform.name == "Player")
-                        {
-                            Debug.Log("플레이어가 소 시야내에 있습니다.");
-                            Debug.DrawRay(transform.position + transform.up + transform.forward, _direction, Color.blue);
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
 }

@@ -1814,7 +1814,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 64780018}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.18910751, y: -0.000000016895914, z: 0.0000000032538559, w: 0.9819564}
+  m_LocalRotation: {x: 0.18910751, y: 0.000000016895914, z: -0.0000000032538559, w: 0.9819564}
   m_LocalPosition: {x: 0, y: 6.6, z: -12.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -35923,7 +35923,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1423192200}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0000000032538559, y: 0.9819564, z: -0.18910751, w: 0.000000016895914}
+  m_LocalRotation: {x: -0.0000000032538559, y: 0.9819564, z: -0.18910751, w: -0.000000016895914}
   m_LocalPosition: {x: 11.33, y: 6.99, z: 13.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -50698,7 +50698,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2055497425}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0000000032538559, y: 0.9819564, z: -0.18910751, w: 0.000000016895914}
+  m_LocalRotation: {x: -0.0000000032538559, y: 0.9819564, z: -0.18910751, w: -0.000000016895914}
   m_LocalPosition: {x: 0.3199997, y: 6.6, z: 16.130001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -56229,11 +56229,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbbaff2e52bc923479e272d7f1b5e318, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _viewAngle: 32.73
-  _viewDistance: 3.86
-  targetMask:
+  ViewAngle: 71
+  Distance: 4.82
+  TargetMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
+  ObstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!33 &8938356493261847507
 MeshFilter:
   m_ObjectHideFlags: 0
