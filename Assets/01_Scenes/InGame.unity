@@ -54332,6 +54332,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 0
+  _attackDelay: 0
   currentState: 0
   _damaged: 0
 --- !u!114 &1933117483
@@ -54597,6 +54598,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
+  _attackDelay: 0
   currentState: 0
   _damaged: 0
 --- !u!114 &1934482840
@@ -56318,6 +56320,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 0
+  _attackDelay: 0
   currentState: 0
   _damaged: 0
 --- !u!114 &2009958293
@@ -63703,6 +63706,7 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
+  _attackDelay: 0
   currentState: 0
   _damaged: 0
 --- !u!114 &8818352946020915886

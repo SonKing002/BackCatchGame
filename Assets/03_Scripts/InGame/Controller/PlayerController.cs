@@ -97,7 +97,7 @@ namespace MJ.Player
                 case State.Attack:
                     //Attack ¾Ö´Ï¸ÞÀÌ¼Ç Ãß°¡
                     //ÇÔ¼ö µô·¹ÀÌ ¿ëÀ¸·Î °ø°Ý, ¾Ö´Ï¸ÞÀÌ¼Ç Ãß°¡ (ÃßÈÄ ¼öÁ¤¿ä±¸)
-                    _animator.Play("ATK1");
+                    Debug.Log("Animation play called");
                     Attack();
                     break;
                 case State.Damage:
@@ -114,7 +114,10 @@ namespace MJ.Player
         private void Attack()
         {
             if (!_canAttack) return;
-            
+
+            Debug.Log("ÇÔ¼ö È£­ƒµÊ;; play called");
+            _animator.Play("ATK1");
+            currentState = State.Attack;
             _canAttack = false;
             Invoke("AttackDelay", 1.0f);
         }
@@ -130,34 +133,22 @@ namespace MJ.Player
             //¸¶¿ì½º Æ÷Áö¼Ç
             _currentPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, -Camera.main.transform.position.z);
         }
-        //ÁÂ¿ìÀÇ È¸ÀüÀ» °ü¸®ÇÏ´Â ÇÔ¼ö.
+        //ÁÂ¿ìÀÇ È¸ÀüÀ» °ü¸®ÇÏ´Â ÇÔ¼ö. ¿ª½Ã Á×¾úÀ» ¶§´Â ¿òÁ÷ÀÌ¸é ¾ÈµÊ~
         private void Rotate(float input)
         {
+            if (currentState == State.Death) return;
             transform.localRotation *= Quaternion.Euler(0f, input * _rotateSpeed * Time.deltaTime, 0f);
         }
         //Ä³¸¯ÅÍÀÇ ¿òÁ÷ÀÓÀ» °ü¸®ÇÏ´Â ÇÔ¼ö
         private void Move()
         {
-            //¹Ù´Ú¿¡ ·¹ÀÌÄ³½ºÆ®¸¦ ½ð´Ù.(Áö»ó È®ÀÎ¿ë)
-            isGrounded = Physics.Raycast(transform.position, Vector3.down, _groundDistance, groundLayer);
-            Vector3 move = Vector3.zero;
-            
-            if (!OnTouching)
-            {
-                if(!_damaged || currentState == State.Death || currentState == State.Attack)
-                this.currentState = State.Idle;
-            }
-            else
-            {
-                if(!_damaged || currentState == State.Death || currentState == State.Attack)
-                this.currentState = State.Move;
+            //Á×¾úÀ» ¶§´Â ¿òÁ÷ÀÌ¸é ¾ÈµÊ~
+            if (currentState == State.Death) return;
 
-                _direction = _startPosition - _currentPosition;
-                //Áö¿ª º¯¼ö¿¡ ¹æÇâ °ªÀ» ³ÖÀ½
-                move +=
-                    (-(transform.right * _direction.x) + -(transform.forward * _direction.y)).normalized * _moveSpeed;
-            }
-            
+               //¹Ù´Ú¿¡ ·¹ÀÌÄ³½ºÆ®¸¦ ½ð´Ù.(Áö»ó È®ÀÎ¿ë)
+               isGrounded = Physics.Raycast(transform.position, Vector3.down, _groundDistance, groundLayer);
+            Vector3 move = Vector3.zero;
+
             if (isGrounded && verticalVelocity < 0)
             {
                 verticalVelocity = 0;
@@ -169,6 +160,23 @@ namespace MJ.Player
             }
             move.y = verticalVelocity;
             //Ä³¸¯ÅÍ ÀÌµ¿ ÇÔ¼ö
+            
+
+            if (!OnTouching)
+            {
+                //µ¥¹ÌÁö¸¦ ÀÔ¾ú°Å³ª °ø°ÝÇÒ¶§´Â  Idle»óÅÂ°¡ ¾Æ´Ï°Ô Ã¼Å© 
+                if (currentState == State.Attack || currentState == State.Damage) return;
+                this.currentState = State.Idle;
+            }
+            else
+            {
+                _direction = _startPosition - _currentPosition;
+                //Áö¿ª º¯¼ö¿¡ ¹æÇâ °ªÀ» ³ÖÀ½
+                move +=
+                    (-(transform.right * _direction.x) + -(transform.forward * _direction.y)).normalized * _moveSpeed;
+                if (currentState == State.Attack || currentState == State.Damage) return;
+                this.currentState = State.Move;
+            }
             _characterController.Move(move * Time.deltaTime);
         }
         private void Jump()

@@ -91,7 +91,7 @@ public class CrushManagement : MonoBehaviour
                 _vulnerable = true;
                 if (_vulnerable && _hitTargetList.Contains(Enemy) && Physics.Raycast(myPosition, targetDir, _attackDistance, _enemyTeamMask))
                 {
-                    //죽었거나 데미지를 입을 때는 중복 데미지 체크
+                    //죽었거나 데미지를 입을 때는 중복 데미지 체크 적이 공격 가능한 상태인가
                     if (_playerController.currentState == State.Death || !_enemyPlayerController.canAttack || _playerController._damaged == true)
                     {
                         return;
