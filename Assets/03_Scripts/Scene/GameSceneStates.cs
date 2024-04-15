@@ -45,27 +45,11 @@ public class GameSceneStates : SceneManagerBase
 
     private void Start()
     {
-        if (ResetToDisable() == true)//모두 비활성화 되면
-        { 
-            //동기화 & 활성화할 스크립트
-            prevSceneIndex = NowSceneIndex();
-            ManagerSetActive(nowSceneIndex, true);
-            print("Done");
-        }
+        //동기화 & 활성화할 스크립트
+        prevSceneIndex = NowSceneIndex();
     }
 
-    /// <summary>
-    /// 모든 게임메니저 오브젝트를 비활성화하는 함수
-    /// </summary>
-    /// <returns>정상 동작 체크용 bool</returns>
-    private bool ResetToDisable()
-    {
-        for (int i = 0; i < Manager.Instance.managerScipts.Count; i++)
-        {
-            ManagerSetActive(i, false);
-        }
-        return true;
-    }
+
 
     /// <summary>
     /// 현재 씬 인덱스 받아오는 함수
@@ -75,16 +59,6 @@ public class GameSceneStates : SceneManagerBase
     {
         Scene scene = SceneManager.GetActiveScene();
         return nowSceneIndex = scene.buildIndex;
-    }
-
-    /// <summary>
-    /// 원하는 게임오브젝트 활성여부를 컨트롤하기 위함
-    /// </summary>
-    /// <param name="i">인덱스</param>
-    /// <param name="isTrue"></param>
-    private void ManagerSetActive(int i, bool isTrue)
-    {
-        Manager.Instance.managerScipts[i].gameObject.SetActive(isTrue);
     }
 
     /// <summary>

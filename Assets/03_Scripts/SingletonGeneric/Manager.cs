@@ -11,13 +11,10 @@ using UnityEngine;
 public class Manager : SingletonOfT<Manager>
 {
     public PopUpUIManager popUpUIManager { get => _popUpUIManager; }
-    public List<SceneManagerBase> managerScipts { get => _managerScipts; }
+
     #region 연결 목록
     //하이어라키에 올라온 게임오브젝트의 컴포넌트기준
-    [Header("Scene")]
-    [SerializeField]
-    private List<SceneManagerBase> _managerScipts;
-    
+
     [Header("UI")]
     [SerializeField]
     private PopUpUIManager _popUpUIManager;
