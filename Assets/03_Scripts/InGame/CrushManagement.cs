@@ -4,10 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static AnimatorManager;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class CrushManagement : MonoBehaviour
 {
+    //리스폰 시간
+    public float respawnTime {  get => _respawnTime; set => _respawnTime = value; }
     //벌어지는 각도(등 판정 체크를 위함
     [SerializeField][Range(0f, 360f)] float _viewAngle;
     //등 판정 체크할 거리
@@ -17,25 +18,29 @@ public class CrushManagement : MonoBehaviour
     //장애물 마스크 > 적과 사이에 벽, 지형지물, 장애물 체크용
     [SerializeField] LayerMask _obstacleMask;
     //공격 가능 여부
-    public bool _vulnerable = false;
+    private bool _vulnerable = false;
     //안에 들어온 대상의 정보 체크
     List<Collider> _hitTargetList = new List<Collider>();
     //공격 가능한 거리
-    [SerializeField] float _attackDistance;
+    [SerializeField]private float _attackDistance;
     //기즈모 체크용 위로 조금 올린 이유는 땅바닥 기준으로 생성되서 올려서 정확하게 판단용
-    [SerializeField] float _height;
-    
+    [SerializeField]private float _height;
+    [SerializeField]private Transform[] _respawnPoint;
+    //피격 후 무적 시간
+    [SerializeField] private float _invisibleTime;
+    Transform _playerTransform;
 
 
     PlayerController _playerController;
 
+    private float _respawnTime;
+
+
+
     private void Awake()
     {
         _playerController = GetComponent<PlayerController>();
-    }
-    private void Update()
-    {
-        Debug.Log(_vulnerable);
+        _playerTransform = GetComponent<Transform>();
     }
     private void OnDrawGizmos()
     {
@@ -76,8 +81,14 @@ public class CrushManagement : MonoBehaviour
             Vector3 targetDir = (targetPos - myPosition).normalized;
             //충돌체와 나와의 각도 계산
             float targetAngle = Mathf.Acos(Vector3.Dot(lookDir, targetDir)) * Mathf.Rad2Deg;
+
+            
+            
             if (targetAngle <= _viewAngle * 0.5f && !Physics.Raycast(myPosition, targetDir, _distance, _obstacleMask))
             {
+                //죽었을 때는 판정 안됨
+                if (_playerController.currentState == State.Death) return;
+
                 //만약 리스트 안에 존재하는 적이라면 중복 등록을 피하기 위해 if문 사용
                 if (_hitTargetList.Contains(Enemy))
                 {
@@ -90,16 +101,29 @@ public class CrushManagement : MonoBehaviour
                 _vulnerable = true;
                 if (_vulnerable && _hitTargetList.Contains(Enemy) && Physics.Raycast(myPosition, targetDir, _attackDistance, _enemyTeamMask))
                 {
-
-                    //체력이 닳는 함수 추가요망 TODO
-
+                    //죽었거나 데미지를 입을 때는 중복 데미지 체크
+                    if(_playerController.currentState == State.Death || _playerController.currentState == State.Damage || _playerController._damaged == true)
+                    {
+                        return;
+                    }
                     _playerController.currentState = State.Damage;
+                    _playerController.hpCount += 1;
                     _playerController.switchUpdate(_playerController.currentState);
                     _playerController._damaged = true;
+                    Invoke("Damaged", _invisibleTime);
                     Debug.Log("아파요ㅠㅠ");
-
-                    //TODO 변경 요구 
-                    Invoke("Damaged", 0.5f);
+ 
+                    //2대 맞는다면...
+                    if( _playerController.hpCount >= 2) 
+                    {
+                        _playerTransform.position = _respawnPoint[0].position;
+                        //혹시 3대 이상 카운트가 올라가거나 죽음 상태라면
+                        if (_playerController.hpCount >= 3 || _playerController.currentState == State.Death) { return; }
+                        
+                        _playerController.currentState = State.Death;
+                        _playerController.switchUpdate(_playerController.currentState);
+                        Invoke("Respawn", 5.0f);
+                    }
                 }
             }
         }
@@ -108,8 +132,18 @@ public class CrushManagement : MonoBehaviour
     {
         _playerController._damaged = false;
     }
-    //각도를 벡터값으로 바꿔주는 함수
-    Vector3 AngleToDir(float angle)
+    void Respawn()
+    {
+
+        if (_playerController.currentState == State.Death)
+        {
+            _playerController.hpCount = 0;
+            _playerController.currentState = State.Idle;
+            _playerController.switchUpdate(_playerController.currentState);
+        }
+    }
+        //각도를 벡터값으로 바꿔주는 함수
+        Vector3 AngleToDir(float angle)
     {
         //각도를 라디안으로 반환하고.
         float radian = angle * Mathf.Deg2Rad;

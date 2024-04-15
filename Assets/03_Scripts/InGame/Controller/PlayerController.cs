@@ -8,7 +8,9 @@ namespace MJ.Player
 {
     public class PlayerController : MonoBehaviour
     {
-        //프로퍼티 첫문자 대문자
+        public int hpCount { get => _count; set => _count = value; }
+
+        //프로퍼티 첫문자 소문자
         //private _소문자
         //public 걍 쓰세요
         //함수는 대문자
@@ -41,19 +43,20 @@ namespace MJ.Player
         private Vector3 _direction;
         //상태 가져오기
         public State currentState;
+        private int _count;
 
         //
         public bool _damaged;
         //
         Animator _animator;
-
-
+        //체력 카운트용 int
 
         private void Awake()
         {
             _characterController = GetComponent<CharacterController>();
             this.currentState = State.Idle;
             _animator = GetComponent<Animator>();
+            hpCount = 0;
         }
 
         private void Start()
@@ -62,6 +65,10 @@ namespace MJ.Player
         }
         private void Update()
         {
+            if (currentState == State.Death)
+            {
+                return;
+            }
             //이동
             Move();
             //회전
@@ -86,11 +93,13 @@ namespace MJ.Player
                     //Attack 애니메이션 추가
                     break;
                 case State.Damage:
+                    
                     //Damage 애니메이션 추가
                     _animator.Play("Damage");
                     break;
                 case State.Death:
                     //Death 애니메이션 추가
+                    _animator.Play("DieA");
                     break;
             }
         }
@@ -107,18 +116,19 @@ namespace MJ.Player
         //캐릭터의 움직임을 관리하는 함수
         private void Move()
         {
+            
             //바닥에 레이캐스트를 쏜다.(지상 확인용)
             isGrounded = Physics.Raycast(transform.position, Vector3.down, _groundDistance, groundLayer);
             Vector3 move = Vector3.zero;
             
             if (!OnTouching)
             {
-                if(!_damaged)
+                if(!_damaged || currentState == State.Death)
                 this.currentState = State.Idle;
             }
             else
             {
-                if(!_damaged)
+                if(!_damaged || currentState == State.Death)
                 this.currentState = State.Move;
 
                 _direction = _startPosition - _currentPosition;
