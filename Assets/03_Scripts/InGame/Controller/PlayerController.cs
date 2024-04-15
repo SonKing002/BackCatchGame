@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +10,7 @@ namespace MJ.Player
     public class PlayerController : MonoBehaviour
     {
         public int hpCount { get => _count; set => _count = value; }
-
+        public bool canAttack { get => _canAttack; set => _canAttack = value; }
         //프로퍼티 첫문자 소문자
         //private _소문자
         //public 걍 쓰세요
@@ -27,8 +28,10 @@ namespace MJ.Player
         [SerializeField] private float _jumpPower;
         //지면에 닿는 거리
         [SerializeField] private float _groundDistance;
-        private bool isGrounded;
         [SerializeField] private LayerMask groundLayer;
+        //공격 딜레이 선언
+        [SerializeField] private float _attackDelay;
+        //공격 가능한지 선언
         //캐릭터 컨트롤러
         private CharacterController _characterController;
         //수평 중력
@@ -44,12 +47,14 @@ namespace MJ.Player
         //상태 가져오기
         public State currentState;
         private int _count;
+        private bool isGrounded;
+        
+        private bool _canAttack = true;
 
         //
         public bool _damaged;
         //
         Animator _animator;
-        //체력 카운트용 int
 
         private void Awake()
         {
@@ -91,9 +96,11 @@ namespace MJ.Player
                     break;
                 case State.Attack:
                     //Attack 애니메이션 추가
+                    //함수 딜레이 용으로 공격, 애니메이션 추가 (추후 수정요구)
+                    _animator.Play("ATK1");
+                    Attack();
                     break;
                 case State.Damage:
-                    
                     //Damage 애니메이션 추가
                     _animator.Play("Damage");
                     break;
@@ -103,6 +110,21 @@ namespace MJ.Player
                     break;
             }
         }
+
+        private void Attack()
+        {
+            if (!_canAttack) return;
+            
+            _canAttack = false;
+            Invoke("AttackDelay", 1.0f);
+        }
+
+        private void AttackDelay()
+        {
+            _canAttack = true;
+            currentState = State.Idle;
+        }
+
         private void currentPostision()
         {
             //마우스 포지션
@@ -116,19 +138,18 @@ namespace MJ.Player
         //캐릭터의 움직임을 관리하는 함수
         private void Move()
         {
-            
             //바닥에 레이캐스트를 쏜다.(지상 확인용)
             isGrounded = Physics.Raycast(transform.position, Vector3.down, _groundDistance, groundLayer);
             Vector3 move = Vector3.zero;
             
             if (!OnTouching)
             {
-                if(!_damaged || currentState == State.Death)
+                if(!_damaged || currentState == State.Death || currentState == State.Attack)
                 this.currentState = State.Idle;
             }
             else
             {
-                if(!_damaged || currentState == State.Death)
+                if(!_damaged || currentState == State.Death || currentState == State.Attack)
                 this.currentState = State.Move;
 
                 _direction = _startPosition - _currentPosition;

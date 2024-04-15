@@ -2,7 +2,9 @@ using MJ.Player;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static AnimatorManager;
 
 public class CrushManagement : MonoBehaviour
@@ -30,8 +32,9 @@ public class CrushManagement : MonoBehaviour
     [SerializeField] private float _invisibleTime;
     Transform _playerTransform;
 
+    private PlayerController _enemyPlayerController;
 
-    PlayerController _playerController;
+    private PlayerController _playerController;
 
     private float _respawnTime;
 
@@ -42,25 +45,14 @@ public class CrushManagement : MonoBehaviour
         _playerController = GetComponent<PlayerController>();
         _playerTransform = GetComponent<Transform>();
     }
-    private void OnDrawGizmos()
+    private void Update()
     {
-        //내 포지션 체크 오브젝트 위치보다 조금 더 높게 설정한 이유는 >점프하고 닿았을 때를 대비함 (수정필요)
         Vector3 myPosition = transform.position + transform.up * _height;
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(myPosition, _distance);
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(myPosition, _attackDistance);
-
         //오브젝트가 y축을 기준으로 회전한 각도를 반환, 여기에 180도를 더해 현재 오브젝트가 바라보는 반대 방향의 각도를 구합니다.
-        float backAngle = (transform.eulerAngles.y)+ 180;  
+        float backAngle = (transform.eulerAngles.y) + 180;
         Vector3 rightDir = AngleToDir(backAngle + _viewAngle * 0.5f);
         Vector3 leftDir = AngleToDir(backAngle - _viewAngle * 0.5f);
         Vector3 lookDir = AngleToDir(backAngle);
-
-        Debug.DrawRay(myPosition, rightDir * _distance, Color.black);
-        Debug.DrawRay(myPosition, leftDir * _distance, Color.black);
-        Debug.DrawRay(myPosition, lookDir * _distance, Color.yellow);
 
         //리스트 내용을 전부 제거
         _hitTargetList.Clear();
@@ -82,44 +74,45 @@ public class CrushManagement : MonoBehaviour
             //충돌체와 나와의 각도 계산
             float targetAngle = Mathf.Acos(Vector3.Dot(lookDir, targetDir)) * Mathf.Rad2Deg;
 
-            
-            
+
+
             if (targetAngle <= _viewAngle * 0.5f && !Physics.Raycast(myPosition, targetDir, _distance, _obstacleMask))
             {
                 //죽었을 때는 판정 안됨
-                if (_playerController.currentState == State.Death) return;
+                if (_playerController.currentState == State.Death || _hitTargetList.Contains(Enemy)) return;
 
-                //만약 리스트 안에 존재하는 적이라면 중복 등록을 피하기 위해 if문 사용
-                if (_hitTargetList.Contains(Enemy))
-                {
-                    return;
-                }
+                
                 //리스트에 충돌체 정보 추가
                 _hitTargetList.Add(Enemy);
+                _enemyPlayerController = Enemy.GetComponent<PlayerController>();
+
                 //디버깅 및 테스트용으로 사용하는 줄 > TODO 삭제요망
                 Debug.DrawLine(myPosition, targetPos, Color.red);
                 _vulnerable = true;
                 if (_vulnerable && _hitTargetList.Contains(Enemy) && Physics.Raycast(myPosition, targetDir, _attackDistance, _enemyTeamMask))
                 {
                     //죽었거나 데미지를 입을 때는 중복 데미지 체크
-                    if(_playerController.currentState == State.Death || _playerController.currentState == State.Damage || _playerController._damaged == true)
+                    if (_playerController.currentState == State.Death || !_enemyPlayerController.canAttack || _playerController._damaged == true)
                     {
                         return;
                     }
                     _playerController.currentState = State.Damage;
                     _playerController.hpCount += 1;
                     _playerController.switchUpdate(_playerController.currentState);
+                    Debug.Log("변경전" + _enemyPlayerController.currentState);
+                    _enemyPlayerController.currentState = State.Attack;
+                    Debug.Log("변경후" + _enemyPlayerController.currentState);
+                    _enemyPlayerController.switchUpdate(_enemyPlayerController.currentState);
                     _playerController._damaged = true;
                     Invoke("Damaged", _invisibleTime);
-                    Debug.Log("아파요ㅠㅠ");
- 
+
                     //2대 맞는다면...
-                    if( _playerController.hpCount >= 2) 
+                    if (_playerController.hpCount >= 2)
                     {
-                        _playerTransform.position = _respawnPoint[0].position;
+                        //_playerTransform.position = _respawnPoint[0].position;
                         //혹시 3대 이상 카운트가 올라가거나 죽음 상태라면
                         if (_playerController.hpCount >= 3 || _playerController.currentState == State.Death) { return; }
-                        
+
                         _playerController.currentState = State.Death;
                         _playerController.switchUpdate(_playerController.currentState);
                         Invoke("Respawn", 5.0f);
@@ -127,6 +120,35 @@ public class CrushManagement : MonoBehaviour
                 }
             }
         }
+    }
+    private void FixedUpdate()
+    {
+        if (_playerController.hpCount >= 2)
+        {
+            _playerTransform.position = _respawnPoint[0].position;
+        }
+    }
+    private void OnDrawGizmos()
+    {
+        //내 포지션 체크 오브젝트 위치보다 조금 더 높게 설정한 이유는 >점프하고 닿았을 때를 대비함 (수정필요)
+        Vector3 myPosition = transform.position + transform.up * _height;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(myPosition, _distance);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(myPosition, _attackDistance);
+
+        //오브젝트가 y축을 기준으로 회전한 각도를 반환, 여기에 180도를 더해 현재 오브젝트가 바라보는 반대 방향의 각도를 구합니다.
+        float backAngle = (transform.eulerAngles.y)+ 180;  
+        Vector3 rightDir = AngleToDir(backAngle + _viewAngle * 0.5f);
+        Vector3 leftDir = AngleToDir(backAngle - _viewAngle * 0.5f);
+        Vector3 lookDir = AngleToDir(backAngle);
+
+        Debug.DrawRay(myPosition, rightDir * _distance, Color.black);
+        Debug.DrawRay(myPosition, leftDir * _distance, Color.black);
+        Debug.DrawRay(myPosition, lookDir * _distance, Color.yellow);
+
+
     }
     void Damaged()
     {
