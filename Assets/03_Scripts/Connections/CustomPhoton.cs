@@ -1,22 +1,18 @@
-using Photon.Pun;
+ï»¿using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class CustomPhoton : MonoBehaviourPunCallbacks //ÇÁ·ÎÆÛÆ¼¿Í ¸Ş¼Òµåµî ÀÛ¼ºµÇ¾îÀÖ´Ù
+public class CustomPhoton : MonoBehaviourPunCallbacks //í”„ë¡œí¼í‹°ì™€ ë©”ì†Œë“œë“± ì‘ì„±ë˜ì–´ìˆë‹¤
 {
-    //Å¬¶óÀÌ¾ğÆ® ¹öÀü Ã¼Å©¿ë : Ãâ½Ã ÈÄÀÇ º¯°æ»çÇ×ÀÌ ¾ø´Â ÇÑ 1·Î À¯Áö
+    //í´ë¼ì´ì–¸íŠ¸ ë²„ì „ ì²´í¬ìš© : ì¶œì‹œ í›„ì˜ ë³€ê²½ì‚¬í•­ì´ ì—†ëŠ” í•œ 1ë¡œ ìœ ì§€
     string gameVersion = "1";
-
-    [SerializeField]
-    private TMP_Text _logText; 
 
     private void Awake()
     {
-        //¸¶½ºÅÍ°¡ ·Îµå·¹º§½Ã, ³ª¸ÓÁö Å¬¶óÀÌ¾ğÆ®°¡ ÀÚµ¿À¸·Î °°Àº ¹æ¿¡ ½ÌÅ©µÉ ¼ö ÀÖµµ·Ï Á¦¾îÇÑ´Ù.
+        //ë§ˆìŠ¤í„°ê°€ ë¡œë“œë ˆë²¨ì‹œ, ë‚˜ë¨¸ì§€ í´ë¼ì´ì–¸íŠ¸ê°€ ìë™ìœ¼ë¡œ ê°™ì€ ë°©ì— ì‹±í¬ë  ìˆ˜ ìˆë„ë¡ ì œì–´í•œë‹¤.
         PhotonNetwork.AutomaticallySyncScene = true;
     }
     void Start()
@@ -24,27 +20,27 @@ public class CustomPhoton : MonoBehaviourPunCallbacks //ÇÁ·ÎÆÛÆ¼¿Í ¸Ş¼Òµåµî ÀÛ¼º
         Connect();
     }
 
-    //È£ÃâÇÏÁö ¾Ê¾Æµµ ÀÌ°÷¿¡ ÀÛ¼ºÇÏ¸é, 
+    //í˜¸ì¶œí•˜ì§€ ì•Šì•„ë„ ì´ê³³ì— ì‘ì„±í•˜ë©´, 
     public override void OnConnectedToMaster()
     {
         base.OnConnectedToMaster();
         Debug.Log("OnConnectedToMaster by called PhotonPun");
-        _logText.text = "¼­¹ö Á¢¼Ó ¿Ï·á";
+        //_logText.text = "ì„œë²„ ì ‘ì† ì™„ë£Œ";
 
     }
     public override void OnDisconnected(DisconnectCause cause)
     {
         base.OnDisconnected(cause);
-        _logText.text = "¼­¹ö Á¢¼Ó ½ÇÆĞ";
+        //_logText.text = "ì„œë²„ ì ‘ì† ì‹¤íŒ¨";
     }
 
     public void Connect()
     {
-        //¼­¹ö¿¡ ¿¬°áµÇ¾îÀÖÁö ¾ÊÀ¸¸é
+        //ì„œë²„ì— ì—°ê²°ë˜ì–´ìˆì§€ ì•Šìœ¼ë©´
         if (PhotonNetwork.IsConnected == false)
         {
-            PhotonNetwork.GameVersion = gameVersion; //ÇöÀç ¹öÀüÀ» ÇÒ´çÇÑ´Ù
-            PhotonNetwork.ConnectUsingSettings(); //ÁØºñµÈ ±¸¼ºÆÄÀÏ·Î ¼­¹ö¿¡ ¿¬°áÇÏ´Â ÇÔ¼ö
+            PhotonNetwork.GameVersion = gameVersion; //í˜„ì¬ ë²„ì „ì„ í• ë‹¹í•œë‹¤
+            PhotonNetwork.ConnectUsingSettings(); //ì¤€ë¹„ëœ êµ¬ì„±íŒŒì¼ë¡œ ì„œë²„ì— ì—°ê²°í•˜ëŠ” í•¨ìˆ˜
             //OnConnectedToMaster();
         }
         else

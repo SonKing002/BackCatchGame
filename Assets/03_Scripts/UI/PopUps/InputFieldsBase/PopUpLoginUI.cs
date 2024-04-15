@@ -10,8 +10,7 @@ using UnityEngine.UI;
 
 public class PopUpLoginUI : PopUpBaseUI
 {
-    public string id { get => _idInputField.text; set { } }
-    public string pw { get => _pwInputField.text; set { } }
+
 
     [SerializeField]
     private TMP_InputField _idInputField;//아이디 입력
@@ -38,10 +37,10 @@ public class PopUpLoginUI : PopUpBaseUI
     /// </summary>
     public void OnClickButton_Login()
     {
-        id = _idInputField.text;
-        pw = _pwInputField.text;
+        Manager.Instance.logText.text = "로그인 시도중";
+        CustomPlayfab.Instance.TryLogin(_idInputField.text, _pwInputField.text);
 
-        print($"id: {id} : pw: {pw}");
+        //print($"id: {Manager.Instance.id} : pw: {Manager.Instance.pw}");
     }
     public void OnClickButton_Register()
     {

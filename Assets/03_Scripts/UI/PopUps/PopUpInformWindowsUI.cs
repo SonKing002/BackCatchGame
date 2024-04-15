@@ -194,71 +194,15 @@ public class PopUpInformWindowsUI : PopUpBaseUI
     #region 상황별 에러들을 정리한 함수 탬플릿
 
     /// <summary>
-    /// 아이디 공란
+    /// 에러
     /// </summary>
-    public void ERROR_EmptyInputID()
+    public void ERROR_Inform()
     {
         CanvasShow();
         MessageReset();
         MessageType(false);
-        MessageTitle("아이디 입력 오류");
-        MessageBody("아이디 입력이 빈칸 또는 공란입니다");
-    }
-
-    /// <summary>
-    /// 비밀번호 공란
-    /// </summary>
-    public void ERROR_EmptyInputPW()
-    {
-        CanvasShow();
-        MessageReset();
-        MessageType(false);
-        MessageTitle("비밀번호 입력 오류");
-        MessageBody("비밀번호 입력이 빈칸 또는 공란입니다");
-    }
-
-    /// <summary>
-    /// 잘못된 아이디 입력형식 
-    /// </summary>
-    public void ERROR_WrongFormID()
-    {
-        CanvasShow(); 
-        MessageReset();
-        MessageType(false);
-        MessageTitle("아이디 입력 오류");
-        MessageBody("아이디만 존재합니다 \n '아이디 + @이메일주소' 형식으로 작성해주세요");
-    }
-    public void ERROR_WrongFormID2()
-    {
-        CanvasShow();
-        MessageReset();
-        MessageType(false);
-        MessageTitle("아이디 입력 오류");
-        MessageBody("아이디가 잘못 되었습니다. \n 아이디는 문자 나 숫자로만 입력이 가능합니다");
-    }
-
-    /// <summary>
-    /// 잘못된 비밀번호 입력형식
-    /// </summary>
-    public void ERROR_WrongFormPW() 
-    {
-        CanvasShow(); 
-        MessageReset();
-        MessageType(false);
-        MessageTitle("비밀번호 입력 오류");
-        MessageBody("비밀번호는 3~15자이어야 합니다");
-    }
-
-    /// <summary>
-    /// 잘못된 비밀번호 입력형식2
-    /// </summary>
-    public void ERROR_WrongFormPW2()
-    {
-        CanvasShow();
-        MessageReset();
-        MessageType(false);
-        MessageTitle("비밀번호 입력 오류");
-        MessageBody("비밀번호는 \'숫자 + 영문자\'만 입력할 수 있습니다");
+        MessageTitle("입력 오류");
+        MessageBody("아이디 또는 비밀번호를 확인 후, 다시 입력해주시기 바랍니다");
     }
 
     /// <summary>
