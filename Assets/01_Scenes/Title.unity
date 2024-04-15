@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.7537942, g: 0.67638296, b: 0.8111657, a: 1}
+  m_IndirectSpecularColor: {r: 0.75392586, g: 0.6765448, b: 0.8103931, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -754,9 +754,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 8974232675790514847, guid: 90a28b336cbf7e3419137e8fb9fc97c6,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1846165834}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 90a28b336cbf7e3419137e8fb9fc97c6, type: 3}
+--- !u!4 &148090421 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8974232675790514847, guid: 90a28b336cbf7e3419137e8fb9fc97c6,
+    type: 3}
+  m_PrefabInstance: {fileID: 148090420}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &233676998
 GameObject:
   m_ObjectHideFlags: 0
@@ -5151,6 +5161,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1781027857}
   m_CullTransparentMesh: 1
+--- !u!1 &1846165833
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1846165834}
+  - component: {fileID: 1846165835}
+  m_Layer: 0
+  m_Name: AnimatorManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1846165834
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1846165833}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 148090421}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1846165835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1846165833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b155670ba4089d4f8a2eaa542e2784f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1891631286
 GameObject:
   m_ObjectHideFlags: 0

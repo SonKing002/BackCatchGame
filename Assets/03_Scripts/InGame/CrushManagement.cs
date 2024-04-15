@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class CrushManagement : MonoBehaviour
 {
@@ -10,17 +10,31 @@ public class CrushManagement : MonoBehaviour
     //등 판정 체크할 거리
     [SerializeField] float _distance;
     //체크 할 적 레이어 마스크
-    [SerializeField] LayerMask _enemyMask;
+    [SerializeField] LayerMask _enemyTeamMask;
     //장애물 마스크 > 적과 사이에 벽, 지형지물, 장애물 체크용
     [SerializeField] LayerMask _obstacleMask;
-
+    //공격 가능 여부
+    public bool _vulnerable = false;
+    //안에 들어온 대상의 정보 체크
     List<Collider> _hitTargetList = new List<Collider>();
+    //공격 가능한 거리
+    [SerializeField] float _attackDistance;
+    //기즈모 체크용 위로 조금 올린 이유는 땅바닥 기준으로 생성되서 올려서 정확하게 판단용
+    [SerializeField] float _height;
+
+    private void Update()
+    {
+        Debug.Log(_vulnerable);
+    }
     private void OnDrawGizmos()
     {
         //내 포지션 체크 오브젝트 위치보다 조금 더 높게 설정한 이유는 >점프하고 닿았을 때를 대비함 (수정필요)
-        Vector3 myPosition = transform.position + Vector3.up * 0.3f;
+        Vector3 myPosition = transform.position + transform.up * _height;
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(myPosition, _distance);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(myPosition, _attackDistance);
 
         //오브젝트가 y축을 기준으로 회전한 각도를 반환, 여기에 180도를 더해 현재 오브젝트가 바라보는 반대 방향의 각도를 구합니다.
         float backAngle = (transform.eulerAngles.y)+ 180;  
@@ -35,14 +49,18 @@ public class CrushManagement : MonoBehaviour
         //리스트 내용을 전부 제거
         _hitTargetList.Clear();
 
-        Collider[] Targets = Physics.OverlapSphere(myPosition, _distance, _enemyMask);
+        Collider[] Targets = Physics.OverlapSphere(myPosition, _distance, _enemyTeamMask);
 
-        if (Targets.Length == 0) return;
+        if (Targets.Length == 0)
+        {
+            _vulnerable = false;
+            return;
+        }
 
         foreach (Collider Enemy in Targets)
         {
             //레이캐스트에 들어온 충돌체의 위치값 체크
-            Vector3 targetPos = Enemy.transform.position;
+            Vector3 targetPos = Enemy.transform.position + transform.up * _height;
             //충돌한 거리 체크
             Vector3 targetDir = (targetPos - myPosition).normalized;
             //충돌체와 나와의 각도 계산
@@ -58,6 +76,12 @@ public class CrushManagement : MonoBehaviour
                 _hitTargetList.Add(Enemy);
                 //디버깅 및 테스트용으로 사용하는 줄 > TODO 삭제요망
                 Debug.DrawLine(myPosition, targetPos, Color.red);
+                _vulnerable = true;
+                if (_vulnerable && _hitTargetList.Contains(Enemy) && Physics.Raycast(myPosition, targetDir, _attackDistance, _enemyTeamMask))
+                {
+                    //체력이 닳는 함수 추가요망 TODO
+                    Debug.Log("아파요ㅠㅠ");
+                }
             }
         }
     }
