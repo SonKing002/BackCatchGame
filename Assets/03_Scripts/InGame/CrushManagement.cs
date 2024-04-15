@@ -1,6 +1,9 @@
+using MJ.Player;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static AnimatorManager;
 using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class CrushManagement : MonoBehaviour
@@ -21,7 +24,15 @@ public class CrushManagement : MonoBehaviour
     [SerializeField] float _attackDistance;
     //기즈모 체크용 위로 조금 올린 이유는 땅바닥 기준으로 생성되서 올려서 정확하게 판단용
     [SerializeField] float _height;
+    
 
+
+    PlayerController _playerController;
+
+    private void Awake()
+    {
+        _playerController = GetComponent<PlayerController>();
+    }
     private void Update()
     {
         Debug.Log(_vulnerable);
@@ -79,13 +90,24 @@ public class CrushManagement : MonoBehaviour
                 _vulnerable = true;
                 if (_vulnerable && _hitTargetList.Contains(Enemy) && Physics.Raycast(myPosition, targetDir, _attackDistance, _enemyTeamMask))
                 {
+
                     //체력이 닳는 함수 추가요망 TODO
+
+                    _playerController.currentState = State.Damage;
+                    _playerController.switchUpdate(_playerController.currentState);
+                    _playerController._damaged = true;
                     Debug.Log("아파요ㅠㅠ");
+
+                    //TODO 변경 요구 
+                    Invoke("Damaged", 0.5f);
                 }
             }
         }
     }
-
+    void Damaged()
+    {
+        _playerController._damaged = false;
+    }
     //각도를 벡터값으로 바꿔주는 함수
     Vector3 AngleToDir(float angle)
     {

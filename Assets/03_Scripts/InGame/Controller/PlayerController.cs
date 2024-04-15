@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.XR;
+using static AnimatorManager;
 namespace MJ.Player
 {
     public class PlayerController : MonoBehaviour
@@ -38,14 +39,27 @@ namespace MJ.Player
         private Vector3 _currentPosition;
         //그 두 벡터값을 뺀 벡터값을 저장할 곳
         private Vector3 _direction;
+        //상태 가져오기
+        public State currentState;
+
+        //
+        public bool _damaged;
+        //
+        Animator _animator;
 
 
 
         private void Awake()
         {
             _characterController = GetComponent<CharacterController>();
+            this.currentState = State.Idle;
+            _animator = GetComponent<Animator>();
         }
 
+        private void Start()
+        {
+            
+        }
         private void Update()
         {
             //이동
@@ -54,8 +68,32 @@ namespace MJ.Player
             Rotate(-_direction.normalized.x);
             //현재 마우스 포지션 갱신
             currentPostision();
+            switchUpdate(currentState);
         }
-        
+        public void switchUpdate(State state)
+        {
+            switch (state)
+            {
+                case State.Idle:
+                    //Idle 애니메이션 추가
+                    _animator.Play("IdleA");
+                    break;
+                case State.Move:
+                    //Move 애니메이션 추가
+                    _animator.Play("Run");
+                    break;
+                case State.Attack:
+                    //Attack 애니메이션 추가
+                    break;
+                case State.Damage:
+                    //Damage 애니메이션 추가
+                    _animator.Play("Damage");
+                    break;
+                case State.Death:
+                    //Death 애니메이션 추가
+                    break;
+            }
+        }
         private void currentPostision()
         {
             //마우스 포지션
@@ -72,14 +110,23 @@ namespace MJ.Player
             //바닥에 레이캐스트를 쏜다.(지상 확인용)
             isGrounded = Physics.Raycast(transform.position, Vector3.down, _groundDistance, groundLayer);
             Vector3 move = Vector3.zero;
-            if (OnTouching)
+            
+            if (!OnTouching)
             {
-                //이동할 방향
+                if(!_damaged)
+                this.currentState = State.Idle;
+            }
+            else
+            {
+                if(!_damaged)
+                this.currentState = State.Move;
+
                 _direction = _startPosition - _currentPosition;
                 //지역 변수에 방향 값을 넣음
                 move +=
                     (-(transform.right * _direction.x) + -(transform.forward * _direction.y)).normalized * _moveSpeed;
             }
+            
             if (isGrounded && verticalVelocity < 0)
             {
                 verticalVelocity = 0;
