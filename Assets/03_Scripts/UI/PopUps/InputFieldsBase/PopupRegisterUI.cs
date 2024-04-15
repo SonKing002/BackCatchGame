@@ -42,14 +42,14 @@ public class PopUpRegisterUI : PopUpInputFieldBaseUI
     }
 
     /// <summary>
-    /// 회원가입 시 할 일
+    /// 회원가입 조건 
     /// </summary>
     public override void InputAct()
     {
         //최소 조건 부합하면,
         if (_isSuccess == true)
         {
-            //Todo : 통합
+            
             PopUpInformWindowsUI.Instance.Success_Inform("아이디 생성 완료", $"생성된 아이디 :{_idInputField.text} \n 이제, 로그인을 통해 게임을 접속할 수 있습니다");
             Manager.Instance.logText.text = "회원가입 완료";
 
