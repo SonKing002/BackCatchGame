@@ -14,7 +14,6 @@ public class PopUpInputFieldBaseUI : PopUpBaseUI
     #region 입력창 2개에 대한 프로퍼티
     public string idInputField { get => _idInputField.text; set { } }
     public string pwInputField { get => _pwInputField.text; set { } }
-    public bool isSuccess { get => _isSuccess; set { } }
     #endregion
 
     #region 내부변수 (protected)
@@ -27,18 +26,23 @@ public class PopUpInputFieldBaseUI : PopUpBaseUI
     protected TMP_InputField _pwInputField;//비밀번호
     [SerializeField]
     protected Button _confirmButton;
-    protected bool _isSuccess;
     #endregion
 
     /// <summary>
-    /// 버튼의 연결사항 함수
+    /// 리셋 함수
     /// </summary>
-    public virtual void OnClickButton_Link() 
+    public override void Resetting()
     {
-        //파생 클래스의 각각의 OnClickButton_Link 함수를 활용, (해당 코드 블럭 내부에 호출하고, 확장사용가능)
-        _isSuccess = CheckCondition(_idInputField.text, _pwInputField.text);
+        _idInputField.text = null;
+        _pwInputField.text = null;
     }
-
+    /*
+    /// <summary>
+    /// 아이디 비밀번호 조건, 입력에 대한 검사 함수
+    /// </summary>
+    /// <param name="idText"></param>
+    /// <param name="pwText"></param>
+    /// <returns></returns>
     public bool CheckCondition(string idText, string pwText)
     {
         //빈 공간이라면,
@@ -93,5 +97,6 @@ public class PopUpInputFieldBaseUI : PopUpBaseUI
         return true;
         #endregion
     }
+    */
 
 }

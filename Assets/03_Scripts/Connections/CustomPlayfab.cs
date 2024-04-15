@@ -6,10 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using Unity.VisualScripting;
 
 
 public class CustomPlayfab : SingletonOfT<CustomPlayfab>
 {
+
     private void Awake()
     {
         Init();
@@ -26,7 +28,7 @@ public class CustomPlayfab : SingletonOfT<CustomPlayfab>
             If you have already set the value in the Editor Extensions, this can be skipped.
             */
             PlayFabSettings.staticSettings.TitleId = "E5507";
-            Manager.Instance.logText.text = "에러발생, playfabs TitleID 세팅이 필요합니다";
+            PopUpLogUI.Instance.logText.text = "에러발생, playfabs TitleID 세팅이 필요합니다";
         }
     }
 
@@ -58,7 +60,9 @@ public class CustomPlayfab : SingletonOfT<CustomPlayfab>
     /// <param name="result"></param>
     private void OnLoginSuccess(LoginResult result) 
     {
-        Manager.Instance.logText.text = "로그인 성공"; 
+        PopUpLogUI.Instance.logText.text = "로그인 성공";
+
+
     }
 
     /// <summary>
@@ -67,7 +71,8 @@ public class CustomPlayfab : SingletonOfT<CustomPlayfab>
     /// <param name="error"></param>
     private void OnLoginFailure(PlayFabError error)
     {
-        Manager.Instance.logText.text = $"로그인 실패";
+        PopUpLogUI.Instance.logText.text = $"로그인 실패";
+        PopUpInformWindowsUI.Instance.ERROR_Inform("로그인 되지 않았습니다", "아이디 또는 비밀번호를 확인 후, 다시 입력해주시기 바랍니다");
     }
 
     /// <summary>
@@ -76,7 +81,8 @@ public class CustomPlayfab : SingletonOfT<CustomPlayfab>
     /// <param name="result"></param>
     private void OnRegisterSuccess(RegisterPlayFabUserResult result)
     {
-        Manager.Instance.logText.text = "회원가입 성공";
+        PopUpLogUI.Instance.logText.text = "회원가입 성공";
+        PopUpInformWindowsUI.Instance.Success_Inform("성공적으로 생성되었습니다", "로그인을 통해 게임을 접속할 수 있습니다");
 
     }
 
@@ -86,7 +92,8 @@ public class CustomPlayfab : SingletonOfT<CustomPlayfab>
     /// <param name="error"></param>
     private void OnRegisterFailure(PlayFabError error)
     {
-        Manager.Instance.logText.text = "회원가입 실패";
+        PopUpLogUI.Instance.logText.text = "회원가입 실패";
+        PopUpInformWindowsUI.Instance.ERROR_Inform("생성되지 않았습니다", "아이디 또는 비밀번호를 확인 후, 다시 입력해주시기 바랍니다");
     }
 }
 

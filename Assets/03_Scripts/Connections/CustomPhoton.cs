@@ -24,14 +24,12 @@ public class CustomPhoton : MonoBehaviourPunCallbacks //프로퍼티와 메소�
     public override void OnConnectedToMaster()
     {
         base.OnConnectedToMaster();
-        Debug.Log("OnConnectedToMaster by called PhotonPun");
-        //_logText.text = "서버 접속 완료";
-
+        PopUpLogUI.Instance.logText.text = "마스터 서버 연결 완료";
     }
     public override void OnDisconnected(DisconnectCause cause)
     {
         base.OnDisconnected(cause);
-        //_logText.text = "서버 접속 실패";
+        PopUpLogUI.Instance.logText.text = "마스터 서버 연결 실패";
     }
 
     public void Connect()
@@ -41,11 +39,7 @@ public class CustomPhoton : MonoBehaviourPunCallbacks //프로퍼티와 메소�
         {
             PhotonNetwork.GameVersion = gameVersion; //현재 버전을 할당한다
             PhotonNetwork.ConnectUsingSettings(); //준비된 구성파일로 서버에 연결하는 함수
-            //OnConnectedToMaster();
-        }
-        else
-        { 
-            
+            OnConnectedToMaster();
         }
     }
 }
