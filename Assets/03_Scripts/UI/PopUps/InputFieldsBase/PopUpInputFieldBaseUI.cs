@@ -44,12 +44,10 @@ public class PopUpInputFieldBaseUI : PopUpBaseUI
         //빈 공간이라면,
         if (string.IsNullOrEmpty(idText) || string.IsNullOrWhiteSpace(idText))
         {
-            PopUpInformWindowsUI.Instance.ERROR_EmptyInputID();
             return false;
         }
         if (string.IsNullOrEmpty(pwText) || string.IsNullOrWhiteSpace(pwText))
         {
-            PopUpInformWindowsUI.Instance.ERROR_EmptyInputPW();
             return false;
         }
 
@@ -61,7 +59,6 @@ public class PopUpInputFieldBaseUI : PopUpBaseUI
         //이메일 형식이 아니라면
         if (match1.Success == false)
         {
-            PopUpInformWindowsUI.Instance.ERROR_WrongFormID();
             return false;
         }
 
@@ -70,7 +67,6 @@ public class PopUpInputFieldBaseUI : PopUpBaseUI
         if (vals[0].Length <= 0)
         {
             print($"아이디 앞부분 : {vals[0]}");
-            PopUpInformWindowsUI.Instance.ERROR_WrongFormID();
         }
 
         //숫자문자 입력 검사항목
@@ -78,7 +74,6 @@ public class PopUpInputFieldBaseUI : PopUpBaseUI
         regexRull = new Regex(ourPattern);
         if (regexRull.IsMatch(idText)==false)
         {
-            PopUpInformWindowsUI.Instance.ERROR_WrongFormID2();
             return false;
         }
         #endregion
@@ -88,13 +83,11 @@ public class PopUpInputFieldBaseUI : PopUpBaseUI
         //글자수 >= 4, 숫자랑 문자만 입력 가능
         if (pwText.Length <= 3 || regexRull.IsMatch(pwText)==false)
         {
-            PopUpInformWindowsUI.Instance.ERROR_WrongFormPW();
             return false;
         }
 
         if (regexRull.IsMatch(pwText) == false)
         {
-            PopUpInformWindowsUI.Instance.ERROR_WrongFormPW2();
             return false;
         }
         return true;
