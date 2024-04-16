@@ -50,7 +50,8 @@ public class CustomPlayfab : SingletonOfT<CustomPlayfab>
     /// <param name="pw">입력된 비밀번호</param>
     public void TryRegister(string id, string pw)
     { 
-        var request = new RegisterPlayFabUserRequest { Email = id , Password = pw };
+        //RequireBothUsernameAndEmail 디폴트로 true라서, 설정해야 닉네임 입력없이 등록 가능
+        var request = new RegisterPlayFabUserRequest { Email = id , Password = pw ,RequireBothUsernameAndEmail = false};
         PlayFabClientAPI.RegisterPlayFabUser(request, OnRegisterSuccess, OnRegisterFailure);
     }
 
@@ -92,6 +93,7 @@ public class CustomPlayfab : SingletonOfT<CustomPlayfab>
     /// <param name="error"></param>
     private void OnRegisterFailure(PlayFabError error)
     {
+        print(error);
         PopUpLogUI.Instance.logText.text = "회원가입 실패";
         PopUpInformWindowsUI.Instance.ERROR_Inform("생성되지 않았습니다", "아이디 또는 비밀번호를 확인 후, 다시 입력해주시기 바랍니다");
     }

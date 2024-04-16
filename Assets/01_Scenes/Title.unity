@@ -1346,14 +1346,14 @@ MonoBehaviour:
   m_VerticalScrollbarEventHandler: {fileID: 0}
   m_LayoutGroup: {fileID: 0}
   m_ScrollSensitivity: 1
-  m_ContentType: 6
-  m_InputType: 0
+  m_ContentType: 7
+  m_InputType: 2
   m_AsteriskChar: 42
-  m_KeyboardType: 7
+  m_KeyboardType: 0
   m_LineType: 0
   m_HideMobileInput: 0
   m_HideSoftKeyboard: 0
-  m_CharacterValidation: 7
+  m_CharacterValidation: 0
   m_RegexValue: 
   m_GlobalPointSize: 14
   m_CharacterLimit: 15
@@ -6975,8 +6975,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _popUpUIManager: {fileID: 3661416882964636942}
-  _logCanvas: {fileID: 2998127855811308960}
-  _logText: {fileID: 4848044279031682100}
 --- !u!1 &6804084655926687204
 GameObject:
   m_ObjectHideFlags: 0
@@ -7115,11 +7113,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 608749288615422344}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 323958eb9880f8f48b5c6eef2387ebee, type: 3}
+  m_Script: {fileID: 11500000, guid: 07507d170ee25f146a03e755b42f0bf2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _useText: {fileID: 4848044279031682100}
-  _image: {fileID: 5483917519364474296}
+  obj: {fileID: 6825255837043344135}
+  _logText: {fileID: 4848044279031682100}
 --- !u!1 &9203714803349071198
 GameObject:
   m_ObjectHideFlags: 0

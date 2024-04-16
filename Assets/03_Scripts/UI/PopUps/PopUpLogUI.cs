@@ -25,7 +25,7 @@ public class PopUpLogUI : PopUpBaseUI
     protected override void Awake()
     {
         base.Awake();
-        _myCanvas.enabled = false;
+        //_myCanvas.enabled = false;
 
         if (_instance != null)
         {

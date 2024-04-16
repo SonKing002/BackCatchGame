@@ -39,8 +39,8 @@ public class PopUpBaseUI : BaseUI<PopUpBaseUI>
     protected virtual void Awake()
     {
         _myCanvas = this.GetComponent<Canvas>();
-
     }
+
     public void Start()
     {
         popUpUIManager = Manager.Instance.popUpUIManager;//캐싱
@@ -55,8 +55,6 @@ public class PopUpBaseUI : BaseUI<PopUpBaseUI>
         popUpUIManager.uis.Push(this);//추가
         popUpUIManager.uiList.Add(popUpUIManager.uis.ToArray()[popUpUIManager.uis.Count - 1]);//인스펙터 확인용
         popUpUIManager.ReSortingOrder(this._myCanvas);//순서 재정렬
-        //print(this.gameObject.name);
-        //Debug.Log($"+1 : {UIManager.Instance.uis.Count}");
     }
 
     /// <summary>

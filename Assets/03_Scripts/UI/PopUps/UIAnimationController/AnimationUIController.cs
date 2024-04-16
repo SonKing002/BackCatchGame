@@ -15,13 +15,11 @@ public enum UIAnimate
 /// <summary>
 /// 유아이 애니메이션 연출 컨트롤러
 /// </summary>
-/// 
 public  class AnimationUIController
 {
     BlinkUIAnimation blinkAnim;
 
     public Canvas logCanvas;
-
 
     /// <summary>
     /// isNeedAnimate가 true인 PopUI는 컴포넌트를 붙인다.
@@ -46,8 +44,6 @@ public  class AnimationUIController
             case UIAnimate.Shake:
                 break;
         }
-
-
     }
 }
 

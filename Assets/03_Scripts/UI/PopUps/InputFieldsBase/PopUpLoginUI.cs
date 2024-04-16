@@ -37,7 +37,7 @@ public class PopUpLoginUI : PopUpBaseUI
     {
         PopUpLogUI.Instance.logText.text = "로그인 시도중";
         CustomPlayfab.Instance.TryLogin(_idInputField.text, _pwInputField.text);
-        Resetting();
+        //Resetting();
     }
 
     public void OnClickButton_Register()
