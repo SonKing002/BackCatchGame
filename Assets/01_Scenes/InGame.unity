@@ -2318,7 +2318,7 @@ MonoBehaviour:
   _obstacleMask:
     serializedVersion: 2
     m_Bits: 8
-  _playerTransform: {fileID: 8154547662531117078}
+  _playerTransform: {fileID: 933400334}
 --- !u!114 &64780024
 MonoBehaviour:
   m_ObjectHideFlags: 0
