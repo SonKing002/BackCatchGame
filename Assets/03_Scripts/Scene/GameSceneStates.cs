@@ -16,7 +16,7 @@ public enum EnumScene
     Game
 }
 
-public class GameSceneStates : SceneManagerBase
+public class GameSceneStates : SingletonOfT<GameSceneStates>
 {
 
     #region 프로퍼티
@@ -46,17 +46,25 @@ public class GameSceneStates : SceneManagerBase
     private int prevSceneIndex;
     #endregion
 
+    private void Awake()
+    {
+        if (Init() == true)
+        { 
+            DontDestroyOnLoad(this);
+        }
+    }
+
     private void Start()
     {
         //동기화 & 활성화할 스크립트
-        prevSceneIndex = NowSceneIndex();
+        nowSceneIndex = NowSceneIndex();
+        prevSceneIndex = nowSceneIndex;
     }
 
     private void Update()
     {
         CheckScene(); 
     }
-
 
     /// <summary>
     /// 현재 씬 인덱스 받아오는 함수
@@ -65,7 +73,7 @@ public class GameSceneStates : SceneManagerBase
     private int NowSceneIndex()
     {
         Scene scene = SceneManager.GetActiveScene();
-        return nowSceneIndex = scene.buildIndex;
+        return scene.buildIndex;
     }
 
     /// <summary>
@@ -103,7 +111,6 @@ public class GameSceneStates : SceneManagerBase
         }
         //동기화
         prevSceneIndex = nowSceneIndex;
-
         //GetEnumIndex(_selectedScene);
     }
     /*아직 필요없음
@@ -139,7 +146,7 @@ public class GameSceneStates : SceneManagerBase
     /// </summary>
     public void GoToNextScene()
     {
-        NowSceneIndex();
+        nowSceneIndex = NowSceneIndex();
 
         _selectedScene = (EnumScene)(++nowSceneIndex);
         ChangeScene(nowSceneIndex);
