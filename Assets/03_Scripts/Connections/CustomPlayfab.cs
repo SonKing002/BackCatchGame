@@ -11,7 +11,6 @@ using Unity.VisualScripting;
 
 public class CustomPlayfab : SingletonOfT<CustomPlayfab>
 {
-
     private void Awake()
     {
         Init();
@@ -50,7 +49,7 @@ public class CustomPlayfab : SingletonOfT<CustomPlayfab>
     /// <param name="pw">입력된 비밀번호</param>
     public void TryRegister(string id, string pw)
     { 
-        //RequireBothUsernameAndEmail 디폴트로 true라서, 설정해야 닉네임 입력없이 등록 가능
+        //RequireBothUsernameAndEmail 디폴트: true라서, 설정해야 닉네임 입력없이 등록 가능하다
         var request = new RegisterPlayFabUserRequest { Email = id , Password = pw ,RequireBothUsernameAndEmail = false};
         PlayFabClientAPI.RegisterPlayFabUser(request, OnRegisterSuccess, OnRegisterFailure);
     }
@@ -62,8 +61,7 @@ public class CustomPlayfab : SingletonOfT<CustomPlayfab>
     private void OnLoginSuccess(LoginResult result) 
     {
         PopUpLogUI.Instance.logText.text = "로그인 성공";
-
-
+        CustomPhoton.Instance.JoinLobby();//성공하면 바로 로비 보냄
     }
 
     /// <summary>

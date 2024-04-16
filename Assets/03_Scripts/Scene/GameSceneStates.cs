@@ -18,8 +18,8 @@ public enum EnumScene
 
 public class GameSceneStates : SceneManagerBase
 {
-    #region 프로퍼티
 
+    #region 프로퍼티
     /// <summary>
     /// 현재 씬
     /// </summary>
@@ -28,6 +28,9 @@ public class GameSceneStates : SceneManagerBase
 
     #region 내부변수
 
+    /// <summary>
+    /// 현 상태를 분기하는 이넘타입 변수
+    /// </summary>
     [SerializeField]
     private EnumScene _selectedScene = EnumScene.Title;
 
@@ -49,6 +52,10 @@ public class GameSceneStates : SceneManagerBase
         prevSceneIndex = NowSceneIndex();
     }
 
+    private void Update()
+    {
+        CheckScene(); 
+    }
 
 
     /// <summary>
@@ -66,12 +73,6 @@ public class GameSceneStates : SceneManagerBase
     /// </summary>
     private void CheckScene()
     {
-        NowSceneIndex();
-        if (prevSceneIndex == nowSceneIndex)
-        {
-            return;
-        }
-
         //달라졌다면 (다른 씬 이동처리)
         _selectedScene = (EnumScene)nowSceneIndex;
         
@@ -79,6 +80,14 @@ public class GameSceneStates : SceneManagerBase
         switch (_selectedScene)
         {
             case EnumScene.Title:
+                
+                if (CustomPhoton.Instance.isLogin == false)
+                {
+                    return;
+                }
+
+                GoToNextScene();
+
                 break;
             case EnumScene.Lobby:
                 break;
@@ -87,6 +96,14 @@ public class GameSceneStates : SceneManagerBase
             case EnumScene.Game:
                 break;
         }
+
+        if (prevSceneIndex == nowSceneIndex)
+        {
+            return;
+        }
+        //동기화
+        prevSceneIndex = nowSceneIndex;
+
         //GetEnumIndex(_selectedScene);
     }
     /*아직 필요없음
@@ -115,5 +132,18 @@ public class GameSceneStates : SceneManagerBase
     public void ChangeScene(int i)
     {
         SceneManager.LoadScene(i);
+    }
+
+    /// <summary>
+    /// 다음 씬으로 이동하는 함수
+    /// </summary>
+    public void GoToNextScene()
+    {
+        NowSceneIndex();
+
+        _selectedScene = (EnumScene)(++nowSceneIndex);
+        ChangeScene(nowSceneIndex);
+        print(nowSceneIndex);
+        print(SceneManager.GetActiveScene());
     }
 }
