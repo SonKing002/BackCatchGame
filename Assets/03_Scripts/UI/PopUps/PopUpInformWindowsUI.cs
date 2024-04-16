@@ -105,18 +105,11 @@ public class PopUpInformWindowsUI : PopUpBaseUI
     }
     */
 
-    public override void InputAct()
-    {
-        //미정
-    }
 
-    /// <summary>
-    /// 사용하기 전 미리 리셋정리 함수
-    /// </summary>
-    public void MessageReset()
+    public override void Resetting()
     {
-        _titleText.text = "";
-        _bodyText.text = "";
+        _titleText.text = null;
+        _bodyText.text = null;
     }
 
     /// <summary>
@@ -191,18 +184,21 @@ public class PopUpInformWindowsUI : PopUpBaseUI
         CavasHide();
     }
 
-    #region 상황별 에러들을 정리한 함수 탬플릿
+    #region 에러들을 정리한 함수 탬플릿
+
 
     /// <summary>
-    /// 에러
+    /// 실패 내용 작성 함수
     /// </summary>
-    public void ERROR_Inform()
+    /// <param name="title">제목</param>
+    /// <param name="body">내용</param>
+    public void ERROR_Inform(string title, string body)
     {
         CanvasShow();
-        MessageReset();
+        Resetting();
         MessageType(false);
-        MessageTitle("입력 오류");
-        MessageBody("아이디 또는 비밀번호를 확인 후, 다시 입력해주시기 바랍니다");
+        MessageTitle(title);
+        MessageBody(body);
     }
 
     /// <summary>
@@ -213,7 +209,7 @@ public class PopUpInformWindowsUI : PopUpBaseUI
     public void Success_Inform(string title, string body)
     {
         CanvasShow();
-        MessageReset();
+        Resetting();
         MessageType(true);
         MessageTitle(title);
         MessageBody(body);

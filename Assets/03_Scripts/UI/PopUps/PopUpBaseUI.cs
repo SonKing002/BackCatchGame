@@ -12,11 +12,14 @@ using System.Diagnostics.CodeAnalysis;
 public class PopUpBaseUI : BaseUI<PopUpBaseUI>
 {
     #region  프로퍼티
-    public override int SortOrder { get => _sortOrder; set { } }
-    public override Canvas Canvas { get => _myCanvas; set { }  }
-    public override bool IsEnable { get => _myCanvas.enabled; set { } }
+    public override int sortOrder { get => _sortOrder; set { } }
+    public override Canvas canvas { get => _myCanvas; set { }  }
+    public override bool isEnable { get => _myCanvas.enabled; set { } }
     public override Action<PopUpBaseUI> on { get => _on; set { }  }
     public override Action<PopUpBaseUI> off { get =>_off; set { } }
+
+    public override bool isNeedAnimate { get => _isNeedAnimate; set { } }
+    
     #endregion
 
     #region 내부변수 (protected:상속만 사용)
@@ -28,13 +31,16 @@ public class PopUpBaseUI : BaseUI<PopUpBaseUI>
     protected Action<PopUpBaseUI> _off;
 
     private PopUpUIManager popUpUIManager;//받아놓고 사용
+
+    protected bool _isNeedAnimate;
     #endregion
+
 
     protected virtual void Awake()
     {
         _myCanvas = this.GetComponent<Canvas>();
-
     }
+
     public void Start()
     {
         popUpUIManager = Manager.Instance.popUpUIManager;//캐싱
@@ -49,8 +55,6 @@ public class PopUpBaseUI : BaseUI<PopUpBaseUI>
         popUpUIManager.uis.Push(this);//추가
         popUpUIManager.uiList.Add(popUpUIManager.uis.ToArray()[popUpUIManager.uis.Count - 1]);//인스펙터 확인용
         popUpUIManager.ReSortingOrder(this._myCanvas);//순서 재정렬
-        //print(this.gameObject.name);
-        //Debug.Log($"+1 : {UIManager.Instance.uis.Count}");
     }
 
     /// <summary>
@@ -87,11 +91,10 @@ public class PopUpBaseUI : BaseUI<PopUpBaseUI>
     }
 
     /// <summary>
-    /// 콜백에서의 각 실행할 내용을 담을 함수
+    /// 리셋하는 함수
     /// </summary>
-    public virtual void InputAct() 
+    public override void Resetting()
     {
-
+        return;
     }
-
 }

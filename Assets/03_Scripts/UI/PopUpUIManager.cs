@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PopUpUIManager : MonoBehaviour
 {
-
+   
     /// <summary>
     /// Stack구조로 현재 띄어진 UI 받기위함
     /// </summary>
@@ -13,14 +13,11 @@ public class PopUpUIManager : MonoBehaviour
     [SerializeField]
     public List<PopUpBaseUI> uiList =new List<PopUpBaseUI> ();//인스펙터에서 보기 위함
 
-    [SerializeField]
-    private Canvas _logCanvas; //로그찍기용 캔버스 : 등록 필요 없음, 단지 최상단에 노출되면 무관함
-
     public void Awake()
     {
-        ResetPopUpUIList();
+        Resetting();
     }
-    public void ResetPopUpUIList()
+    public void Resetting()
     {
         uiList.Clear();
 
@@ -31,10 +28,7 @@ public class PopUpUIManager : MonoBehaviour
             print(uiList[i].gameObject);
         }
     }
-    public void RemoveList() 
-    {
-    
-    }
+
 
     /// <summary>
     /// 오더레이더 순서에 변화가 생기면 호출하여 canvas의 SortingOrder를 수정할 수 있는 함수
@@ -56,7 +50,7 @@ public class PopUpUIManager : MonoBehaviour
         canvas.sortingOrder = sortingNum;
 
         //로그찍는 것은 최상위에 노출 되어야 하기 때문에 단지 하나 더 위로 올린다.
-        _logCanvas.sortingOrder = sortingNum + 1;
+        PopUpLogUI.Instance.canvas.sortingOrder = sortingNum + 1;
     }
 
 }

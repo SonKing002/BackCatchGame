@@ -15,7 +15,7 @@ public abstract class BaseUI<T> : MonoBehaviour
     /// <summary>
     /// 현재 소팅순서
     /// </summary>
-    public abstract int SortOrder
+    public abstract int sortOrder
     {
         get; set;
     }
@@ -23,7 +23,7 @@ public abstract class BaseUI<T> : MonoBehaviour
     /// <summary>
     /// 캔버스 단위
     /// </summary>
-    public abstract Canvas Canvas
+    public abstract Canvas canvas
     {
         get; set;
     }
@@ -31,7 +31,7 @@ public abstract class BaseUI<T> : MonoBehaviour
     /// <summary>
     /// 활성화 여부
     /// </summary>
-    public abstract bool IsEnable 
+    public abstract bool isEnable 
     {
         get; set;
     }
@@ -51,9 +51,14 @@ public abstract class BaseUI<T> : MonoBehaviour
     {
         get; set;
     }
+
+    public virtual bool isNeedAnimate
+    {
+        get; set;
+    }
     #endregion
 
-
+    public abstract void Resetting();
     
     public abstract void CanvasShow();
     public abstract void CavasHide();
