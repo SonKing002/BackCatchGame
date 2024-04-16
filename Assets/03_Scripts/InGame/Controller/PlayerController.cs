@@ -115,7 +115,6 @@ namespace MJ.Player
         {
             if (!_canAttack) return;
 
-            Debug.Log("ÇÔ¼ö È£­ƒµÊ;; play called");
             _animator.Play("ATK1");
             currentState = State.Attack;
             _canAttack = false;
