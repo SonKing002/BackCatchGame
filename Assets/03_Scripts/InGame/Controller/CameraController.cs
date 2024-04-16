@@ -11,9 +11,9 @@ public class CameraController : MonoBehaviour
     [SerializeField] private LayerMask _obstacleMask;
     //가리키는 캐릭터의 트랜스폼
     [SerializeField] private Transform _playerTransform;
-    private void FixedUpdate()
+    private void Update()
     {
-        //레이캐스트로 쏴서 얻는 정보를 저장할 배열들
+        //레이캐스트로 쏴서 얻는 정5보를 저장할 배열들
         RaycastHit[] hits;
         //카메라의 거리와 플레이어의 포지션의 거리 차이 계산
         float _distance = Vector3.Distance(transform.position, _playerTransform.position);
@@ -30,7 +30,8 @@ public class CameraController : MonoBehaviour
             MaterialAlphaChanger materialAlphaChanger = hit.collider.GetComponent<MaterialAlphaChanger>();
             if(materialAlphaChanger == null)
             {
-                throw new NotImplementedException();
+                continue;
+                //throw new NotImplementedException();
             }
             materialAlphaChanger.alphaChange = true;
 
