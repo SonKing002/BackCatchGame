@@ -30,8 +30,6 @@ public class PopUpBaseUI : BaseUI<PopUpBaseUI>
     protected Action<PopUpBaseUI> _on;
     protected Action<PopUpBaseUI> _off;
 
-    private PopUpUIManager popUpUIManager;//받아놓고 사용
-
     protected bool _isNeedAnimate;
     #endregion
 
@@ -41,20 +39,15 @@ public class PopUpBaseUI : BaseUI<PopUpBaseUI>
         _myCanvas = this.GetComponent<Canvas>();
     }
 
-    public void Start()
-    {
-        popUpUIManager = Manager.Instance.popUpUIManager;//캐싱
-    }
-
     /// <summary>
     /// PopUIBase에서 보여주는 것은 추가한다 == 실행 : Push으로 추가
     /// </summary>
     public override void CanvasShow()
     {
         Switching(false);//false일 때, 이 함수로 true 스위치
-        popUpUIManager.uis.Push(this);//추가
-        popUpUIManager.uiList.Add(popUpUIManager.uis.ToArray()[popUpUIManager.uis.Count - 1]);//인스펙터 확인용
-        popUpUIManager.ReSortingOrder(this._myCanvas);//순서 재정렬
+        PopUpUIManager.Instance.uis.Push(this);//추가
+        PopUpUIManager.Instance.uiList.Add(PopUpUIManager.Instance.uis.ToArray()[PopUpUIManager.Instance.uis.Count - 1]);//인스펙터 확인용
+        PopUpUIManager.Instance.ReSortingOrder(this._myCanvas);//순서 재정렬
     }
 
     /// <summary>
@@ -65,12 +58,12 @@ public class PopUpBaseUI : BaseUI<PopUpBaseUI>
         Switching(true);//true일 때, 이 함수로 false 스위치
 
         //빼내기 조건 처리
-        if (popUpUIManager.uis.Count <= 0)
+        if (PopUpUIManager.Instance.uis.Count <= 0)
             return;
 
-        popUpUIManager.uis.Pop();//제거
-        popUpUIManager.uiList.RemoveAt(popUpUIManager.uis.Count);//인스펙터 확인용
-        popUpUIManager.ReSortingOrder(this._myCanvas);//순서 재정렬
+        PopUpUIManager.Instance.uis.Pop();//제거
+        PopUpUIManager.Instance.uiList.RemoveAt(PopUpUIManager.Instance.uis.Count);//인스펙터 확인용
+        PopUpUIManager.Instance.ReSortingOrder(this._myCanvas);//순서 재정렬
     }
 
     /// <summary>

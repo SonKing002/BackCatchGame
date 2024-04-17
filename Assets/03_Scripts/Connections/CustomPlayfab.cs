@@ -11,12 +11,13 @@ using Unity.VisualScripting;
 
 public class CustomPlayfab : SingletonOfT<CustomPlayfab>
 {
-    public GetAccountInfoResult accountInfo { get => _accountInfo;  set { } } 
-    public bool isloginSuccess { get => _isloginSuccess;  set { } } 
+    //public GetAccountInfoResult accountInfo { get => _accountInfo; set { } }
+    public GetAccountInfoResult accountInfo { get; private set; } = new GetAccountInfoResult();//세부정보, 닉네임이랑 이메일을 알 수 있다
+    public bool isloginSuccess { get; private set; }
 
-    private bool _isloginSuccess;//로그인 내부적으로 판단하기 위해사용 ( false / true )
+    //private bool _isloginSuccess;//로그인 내부적으로 판단하기 위해사용 ( false / true )
 
-    private GetAccountInfoResult _accountInfo = new GetAccountInfoResult();//세부정보, 닉네임이랑 이메일을 알 수 있다
+    //private GetAccountInfoResult _accountInfo = new GetAccountInfoResult();//세부정보, 닉네임이랑 이메일을 알 수 있다
 
     private void Awake()
     {
@@ -38,7 +39,7 @@ public class CustomPlayfab : SingletonOfT<CustomPlayfab>
         }
     }
 
-#region 로그인 회원가입
+    #region 로그인 회원가입
     /// <summary>
     /// 플래이펩 로그인 시도 함수
     /// </summary>
@@ -46,7 +47,7 @@ public class CustomPlayfab : SingletonOfT<CustomPlayfab>
     /// <param name="pw">입력된 비밀번호</param>
     public void TryLogin(string id, string pw)
     {
-        var request = new LoginWithEmailAddressRequest { Email = id , Password = pw};//입력값 기준으로
+        var request = new LoginWithEmailAddressRequest { Email = id, Password = pw };//입력값 기준으로
         PlayFabClientAPI.LoginWithEmailAddress(request, OnLoginSuccess, OnLoginFailure);//로그인 시도
     }
 
@@ -56,9 +57,9 @@ public class CustomPlayfab : SingletonOfT<CustomPlayfab>
     /// <param name="id">입력된 아이디</param>
     /// <param name="pw">입력된 비밀번호</param>
     public void TryRegister(string id, string pw)
-    { 
+    {
         //RequireBothUsernameAndEmail 디폴트: true라서, 설정해야 닉네임 입력없이 등록 가능하다
-        var request = new RegisterPlayFabUserRequest { Email = id , Password = pw ,RequireBothUsernameAndEmail = false};
+        var request = new RegisterPlayFabUserRequest { Email = id, Password = pw, RequireBothUsernameAndEmail = false };
         PlayFabClientAPI.RegisterPlayFabUser(request, OnRegisterSuccess, OnRegisterFailure);
     }
 
@@ -66,20 +67,13 @@ public class CustomPlayfab : SingletonOfT<CustomPlayfab>
     /// 로그인 성공시 콜백으로 실행되는 함수
     /// </summary>
     /// <param name="result"></param>
-    private void OnLoginSuccess(LoginResult result) 
+    private void OnLoginSuccess(LoginResult result)
     {
-        _isloginSuccess = true;
-        //print(_loginResult.LastLoginTime);
-        //print(_result.NewlyCreated);//모름
-        //print(_result.PlayFabId);//플래이펩 계정
-        //print(_result.CustomData);//모름
-        //print(_result.EntityToken.Entity.Id);//플래이펩 계정
-        //print(_result?.EntityToken.Entity.Type);//플래이펩 타입
+        isloginSuccess = true;
+        GetInformation();
 
         PopUpLogUI.Instance.logText.text = "로그인 성공";
         CustomPhoton.Instance.JoinLobby();//성공하면 바로 로비 보냄
-
-        GetInformation();
     }
 
     /// <summary>
@@ -114,11 +108,8 @@ public class CustomPlayfab : SingletonOfT<CustomPlayfab>
     }
     #endregion
 
-    private void Update()
-    {
 
-    }
-
+    #region 유저 데이터 가져오기
     /// <summary>
     /// 유저 데이터를 가져오는 함수
     /// </summary>
@@ -133,24 +124,42 @@ public class CustomPlayfab : SingletonOfT<CustomPlayfab>
     /// </summary>
     public void GetUserDataOnSuccess(GetAccountInfoResult result)
     {
-        if (_isloginSuccess == false)
+        if (isloginSuccess == false)
         {
             return;
         }
-        _accountInfo = result;
+        
+        accountInfo = result;
 
-        print(_accountInfo.AccountInfo.TitleInfo.DisplayName);//인 게임의 닉네임
-        print(_accountInfo.AccountInfo.PrivateInfo.Email);//유저의 이메일
-        print(_accountInfo.AccountInfo.TitleInfo.LastLogin);//유저의 마지막 접속일
+        DependencySource.Instance.GetData(
+            accountInfo.AccountInfo.TitleInfo.DisplayName,
+            accountInfo.AccountInfo.TitleInfo.LastLogin,
+            accountInfo.AccountInfo.PrivateInfo.Email
+        );
     }
 
     /// <summary>
     /// 유저 데이터를 가져오는데 실패 시의 콜백 함수
     /// </summary>
     public void GetUserDataOnFailure(PlayFabError result)
-    { 
-        
+    {
+
     }
+
+    #endregion
+
+    #region 설정하기
+    public void UpdateNickname()
+    {
+        PlayFabClientAPI.UpdateUserTitleDisplayName
+        (
+            new UpdateUserTitleDisplayNameRequest
+            { DisplayName = DependencySource.Instance.nickname },
+                (result) => { print("변경 완료"); },
+                (error) => { Utils.LogRed("Error"); return; }
+        );
+    }
+    #endregion
 }
 
 /* 공부중

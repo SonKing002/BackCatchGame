@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class PopUpUIManager : MonoBehaviour
+public class PopUpUIManager : SingletonOfT<PopUpUIManager>
 {
    
     /// <summary>
@@ -15,6 +15,7 @@ public class PopUpUIManager : MonoBehaviour
 
     public void Awake()
     {
+        Init();
         Resetting();
     }
     public void Resetting()

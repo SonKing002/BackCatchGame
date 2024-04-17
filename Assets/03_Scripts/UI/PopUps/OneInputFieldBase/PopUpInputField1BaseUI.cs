@@ -28,7 +28,7 @@ public class PopUpInputField1BaseUI : PopUpBaseUI
 
     public bool CheckInputFormat()
     {
-         if (string.IsNullOrEmpty(_inputField.text) || string.IsNullOrWhiteSpace(_inputField.text))
+         if (string.IsNullOrEmpty(_inputField.text) || string.IsNullOrWhiteSpace(_inputField.text) ||_inputField.text.Length < 1)
          {
              return false;
          }
