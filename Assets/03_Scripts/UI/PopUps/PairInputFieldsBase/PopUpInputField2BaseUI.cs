@@ -7,10 +7,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// 로그인과 회원가입에 대한 함수 수정을 일괄 처리하기 위해 상위 클래스작성
+/// 두개의 입력을 가지는 유아이들의 기본 설계 클래스
 /// </summary>
-public class PopUpInputFieldBaseUI : PopUpBaseUI
+public class PopUpInputField2BaseUI : PopUpBaseUI
 {
+    /* 추가설명
+    * 파생 클래스의 인스펙터 창에서 연결하는 형식으로 제작
+    */
+
     #region 입력창 2개에 대한 프로퍼티
     public string idInputField { get => _idInputField.text; set { } }
     public string pwInputField { get => _pwInputField.text; set { } }

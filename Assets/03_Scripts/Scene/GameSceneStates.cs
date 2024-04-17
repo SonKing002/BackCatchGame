@@ -15,9 +15,15 @@ public enum EnumScene
     Room,
     Game
 }
-
+/// <summary>
+/// 씬전환을 위한 체크용 클래스
+/// </summary>
 public class GameSceneStates : SingletonOfT<GameSceneStates>
 {
+    /* 추가설명
+     * int 현재 씬에 해당하는 인덱스의 값에 따라 Enum 상태 체크하여, 씬을 로드하는 방식
+     * Todo :설계에 대해 더 고민해야한다.
+     */
 
     #region 프로퍼티
     /// <summary>
@@ -77,11 +83,10 @@ public class GameSceneStates : SingletonOfT<GameSceneStates>
     }
 
     /// <summary>
-    /// 씬 검토
+    /// enum을 체크하여 씬을 조작하는 검사용 함수
     /// </summary>
     private void CheckScene()
     {
-        //달라졌다면 (다른 씬 이동처리)
         _selectedScene = (EnumScene)nowSceneIndex;
         
         //해당 씬에서 처리 할 것
@@ -146,11 +151,40 @@ public class GameSceneStates : SingletonOfT<GameSceneStates>
     /// </summary>
     public void GoToNextScene()
     {
+        /* 추가설명
+         * 현재 인덱스를 기준으로 단순히 인덱스를 증가시켜, 다음 씬을 불러온다.
+         */
+
         nowSceneIndex = NowSceneIndex();
+
+        if (nowSceneIndex == SceneManager.sceneCountInBuildSettings -1)
+        {
+            print("가장 마지막 인덱스의 씬입니다 다음 씬을 불러올 수 없습니다");
+            return;
+        }
 
         _selectedScene = (EnumScene)(++nowSceneIndex);
         ChangeScene(nowSceneIndex);
-        print(nowSceneIndex);
-        print(SceneManager.GetActiveScene());
+    }
+
+    /// <summary>
+    /// 이전 씬으로 이동하는 함수
+    /// </summary>
+    public void GoToPrevScene()
+    {
+        /* 추가설명
+         * 현재 인덱스를 기준으로 단순히 인덱스를 감소시켜, 이전 씬을 불러온다.
+         */
+
+        nowSceneIndex = NowSceneIndex();
+
+        if (nowSceneIndex == 0)
+        {
+            print("제일 처음 씬입니다, 이전 씬을 불러올 수 없습니다.");
+            return;
+        }
+
+        _selectedScene = (EnumScene)(--nowSceneIndex);
+        ChangeScene(nowSceneIndex);
     }
 }

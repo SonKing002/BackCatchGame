@@ -9,7 +9,7 @@ using UnityEngine.UI;
 /// <summary>
 /// 회원가입
 /// </summary>
-public class PopUpRegisterUI : PopUpInputFieldBaseUI
+public class PopUpRegisterUI : PopUpInputField2BaseUI
 {
     public static PopUpRegisterUI Instance
     {

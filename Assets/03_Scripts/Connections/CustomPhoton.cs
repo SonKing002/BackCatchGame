@@ -94,9 +94,11 @@ public class CustomPhoton : MonoBehaviourPunCallbacks //프로퍼티와 메소�
     /// </summary>
     public void JoinLobby()
     {
-        PopUpLogUI.Instance.logText.text = "로비 씬 불러오는 중";
-        _isLogin = true;
-        PhotonNetwork.JoinLobby(); 
+        if (_isLogin = CustomPlayfab.Instance.isloginSuccess == true)
+        {
+            PopUpLogUI.Instance.logText.text = "로비 씬 불러오는 중";
+            PhotonNetwork.JoinLobby();
+        }
     }
 
     public override void OnJoinedLobby()
