@@ -1,8 +1,11 @@
+using MJ.Player;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class AnimatorManager : SingletonOfT<AnimatorManager>
+/// <summary>
+/// State의 틀만 여기서 만들어 주고 나머지는 PlayerController에서 관리할거임
+/// </summary>
+public class StateManagement : SingletonOfT<StateManagement>
 {
 
     //_state 캐릭터 상태를 enum형으로 만듬
@@ -16,8 +19,4 @@ public class AnimatorManager : SingletonOfT<AnimatorManager>
         Init();
         DontDestroyOnLoad(this);
     }
-    private void Start()
-    {
-    }
-
 }
