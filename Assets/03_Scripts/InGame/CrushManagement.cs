@@ -5,38 +5,69 @@ using System.Collections.Generic;
 using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static AnimatorManager;
+using static StateManagement;
 
 public class CrushManagement : MonoBehaviour
 {
-    //리스폰 시간
-    public float respawnTime {  get => _respawnTime; set => _respawnTime = value; }
-    //벌어지는 각도(등 판정 체크를 위함
-    [SerializeField][Range(0f, 360f)] float _viewAngle;
-    //등 판정 체크할 거리
-    [SerializeField] float _distance;
-    //체크 할 적 레이어 마스크
-    [SerializeField] LayerMask _enemyTeamMask;
-    //장애물 마스크 > 적과 사이에 벽, 지형지물, 장애물 체크용
-    [SerializeField] LayerMask _obstacleMask;
-    //공격 가능 여부
-    private bool _vulnerable = false;
-    //안에 들어온 대상의 정보 체크
-    List<Collider> _hitTargetList = new List<Collider>();
-    //공격 가능한 거리
-    [SerializeField]private float _attackDistance;
-    //기즈모 체크용 위로 조금 올린 이유는 땅바닥 기준으로 생성되서 올려서 정확하게 판단용
-    [SerializeField]private float _height;
-    [SerializeField]private Transform[] _respawnPoint;
-    //피격 후 무적 시간
+    #region 프로퍼티
+    /// <summary>
+    /// 리스폰 시간
+    /// </summary>
+    public float respawnTime {  get => _respawnTime; set { } }
+    /// <summary>
+    /// 피격 당하지 않는 시간
+    /// </summary>
+    public float invisibleTime { get => _invisibleTime; set { } }
+
     [SerializeField] private float _invisibleTime;
-    Transform _playerTransform;
+    [SerializeField] private float _respawnTime;
+    #endregion
+    /// <summary>
+    /// 후면 판정 각도
+    /// </summary>
+    [SerializeField][Range(0f, 360f)]private float _backAngle;
+    /// <summary>
+    /// 후면 판정할 거리
+    /// </summary>
+    [SerializeField]private float _distance;
+    /// <summary>
+    /// 적의 레이어를 탐지할 적팀 레이어
+    /// </summary>
+    [SerializeField]private LayerMask _enemyTeamMask;
+   /// <summary>
+   /// 적과 사이에 벽, 지형지물, 장애물 레이어 체크용
+   /// </summary>
+    [SerializeField]private LayerMask _obstacleMask;
+    /// <summary>
+    /// 후방에 접근해 적이 플레이어를 공격 가능하게 된 상태 체크용
+    /// </summary>
+    [SerializeField]private bool _vulnerable = false;
+    /// <summary>
+    /// 레이캐스트에 충돌한 충돌체들을 List로 보관
+    /// </summary>
+    List<Collider> _hitTargetList = new List<Collider>();
+    /// <summary>
+    /// 공격 가능한 사거리
+    /// </summary>
+    [SerializeField]private float _attackDistance;
+    /// <summary>
+    /// 플레이어 좌표를 정확히 하기 위한 오차보정용
+    /// </summary>
+    [SerializeField]private float _height;
 
+    /// <summary>
+    /// 플레이어의 트랜스폼
+    /// </summary>
+    private Transform _playerTransform;
+    /// <summary>
+    /// 충돌체의 플레이어컨트롤러
+    /// </summary>
     private PlayerController _enemyPlayerController;
-
+    /// <summary>
+    /// 플레이어의 플레이어컨트롤러 스크립트
+    /// </summary>
     private PlayerController _playerController;
 
-    private float _respawnTime;
 
 
 
@@ -50,8 +81,8 @@ public class CrushManagement : MonoBehaviour
         Vector3 myPosition = transform.position + transform.up * _height;
         //오브젝트가 y축을 기준으로 회전한 각도를 반환, 여기에 180도를 더해 현재 오브젝트가 바라보는 반대 방향의 각도를 구합니다.
         float backAngle = (transform.eulerAngles.y) + 180;
-        Vector3 rightDir = AngleToDir(backAngle + _viewAngle * 0.5f);
-        Vector3 leftDir = AngleToDir(backAngle - _viewAngle * 0.5f);
+        Vector3 rightDir = AngleToDir(backAngle + _backAngle * 0.5f);
+        Vector3 leftDir = AngleToDir(backAngle - _backAngle * 0.5f);
         Vector3 lookDir = AngleToDir(backAngle);
 
         //리스트 내용을 전부 제거
@@ -74,14 +105,11 @@ public class CrushManagement : MonoBehaviour
             //충돌체와 나와의 각도 계산
             float targetAngle = Mathf.Acos(Vector3.Dot(lookDir, targetDir)) * Mathf.Rad2Deg;
 
-
-
-            if (targetAngle <= _viewAngle * 0.5f && !Physics.Raycast(myPosition, targetDir, _distance, _obstacleMask))
+            if (targetAngle <= _backAngle * 0.5f && !Physics.Raycast(myPosition, targetDir, _distance, _obstacleMask))
             {
                 //죽었을 때는 판정 안됨
                 if (_playerController.currentState == State.Death || _hitTargetList.Contains(Enemy)) return;
 
-                
                 //리스트에 충돌체 정보 추가
                 _hitTargetList.Add(Enemy);
                 _enemyPlayerController = Enemy.GetComponent<PlayerController>();
@@ -91,43 +119,29 @@ public class CrushManagement : MonoBehaviour
                 _vulnerable = true;
                 if (_vulnerable && _hitTargetList.Contains(Enemy) && Physics.Raycast(myPosition, targetDir, _attackDistance, _enemyTeamMask))
                 {
+                    _enemyPlayerController.canAttack = true;
                     //죽었거나 데미지를 입을 때는 중복 데미지 체크 적이 공격 가능한 상태인가
                     if (_playerController.currentState == State.Death || !_enemyPlayerController.canAttack || _playerController._damaged == true)
                     {
                         return;
                     }
-                    _playerController.currentState = State.Damage;
-                    _playerController.hpCount += 1;
-                    _playerController.switchUpdate(_playerController.currentState);
-                    Debug.Log("변경전" + _enemyPlayerController.currentState);
-                    _enemyPlayerController.currentState = State.Attack;
-                    Debug.Log("변경후" + _enemyPlayerController.currentState);
-                    _enemyPlayerController.switchUpdate(_enemyPlayerController.currentState);
-                    _playerController._damaged = true;
-                    Invoke("Damaged", _invisibleTime);
-
-                    //2대 맞는다면...
                     if (_playerController.hpCount >= 2)
                     {
-                        //_playerTransform.position = _respawnPoint[0].position;
-                        //혹시 3대 이상 카운트가 올라가거나 죽음 상태라면
-                        if (_playerController.hpCount >= 3 || _playerController.currentState == State.Death) { return; }
-
-                        _playerController.currentState = State.Death;
-                        _playerController.switchUpdate(_playerController.currentState);
-                        Invoke("Respawn", 5.0f);
+                        _playerController.isLive = false;
+                        _playerController.switchStateUpdate(_playerController.currentState);
+                        return;
                     }
+                    _playerController._damaged = true;
+                    Invoke("Damaged", _invisibleTime);
                 }
+                //2대 맞는다면...
+                
             }
         }
     }
-    private void FixedUpdate()
-    {
-        if (_playerController.hpCount >= 2)
-        {
-            _playerTransform.position = _respawnPoint[0].position;
-        }
-    }
+    /// <summary>
+    /// 이 OnDrawGizmos는 디버깅용도로 사용됩니다. 오직 Scene에만 적용됩니다.
+    /// </summary>
     private void OnDrawGizmos()
     {
         //내 포지션 체크 오브젝트 위치보다 조금 더 높게 설정한 이유는 >점프하고 닿았을 때를 대비함 (수정필요)
@@ -140,29 +154,17 @@ public class CrushManagement : MonoBehaviour
 
         //오브젝트가 y축을 기준으로 회전한 각도를 반환, 여기에 180도를 더해 현재 오브젝트가 바라보는 반대 방향의 각도를 구합니다.
         float backAngle = (transform.eulerAngles.y)+ 180;  
-        Vector3 rightDir = AngleToDir(backAngle + _viewAngle * 0.5f);
-        Vector3 leftDir = AngleToDir(backAngle - _viewAngle * 0.5f);
+        Vector3 rightDir = AngleToDir(backAngle + _backAngle * 0.5f);
+        Vector3 leftDir = AngleToDir(backAngle - _backAngle * 0.5f);
         Vector3 lookDir = AngleToDir(backAngle);
 
         Debug.DrawRay(myPosition, rightDir * _distance, Color.black);
         Debug.DrawRay(myPosition, leftDir * _distance, Color.black);
         Debug.DrawRay(myPosition, lookDir * _distance, Color.yellow);
-
-
     }
     void Damaged()
     {
         _playerController._damaged = false;
-    }
-    void Respawn()
-    {
-
-        if (_playerController.currentState == State.Death)
-        {
-            _playerController.hpCount = 0;
-            _playerController.currentState = State.Idle;
-            _playerController.switchUpdate(_playerController.currentState);
-        }
     }
         //각도를 벡터값으로 바꿔주는 함수
         Vector3 AngleToDir(float angle)

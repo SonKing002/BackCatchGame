@@ -18,8 +18,6 @@ public class GameManager : SingletonOfT<GameManager>
     {
         TeamAScore = 0;
         TeamBScore = 0;
-
-
     }
 
 
