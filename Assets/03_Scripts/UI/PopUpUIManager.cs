@@ -44,14 +44,24 @@ public class PopUpUIManager : MonoBehaviour
         }
         else
         { 
-            sortingNum = uis.Count;
+            sortingNum = uis.Count;//최상단 소팅오더
             print(uis.Peek().gameObject.name + $" 내가 선택한 : {sortingNum}");
         }
         canvas.sortingOrder = sortingNum;
 
-        //로그찍는 것은 최상위에 노출 되어야 하기 때문에 단지 하나 더 위로 올린다.
         PopUpLogUI.Instance.canvas.sortingOrder = sortingNum + 1;
     }
 
+    /// <summary>
+    /// 무엇이 팝업이 되건 마지막에 보여줘야하는 유아이들을 차례로 추가할 함수
+    /// </summary>
+    /// <returns></returns>
+    private void DicideToShowLastestUIs(int maxCount)
+    {
+        //
+
+        //로그는 최 상단에 노출
+        PopUpLogUI.Instance.canvas.sortingOrder = ++maxCount;
+    }
 }
 
