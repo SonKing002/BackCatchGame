@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,7 +11,7 @@ namespace MJ.Player
         /// <summary>
         /// 플레이어의 체력카운트
         /// </summary>
-        public int hpCount { get => _hpCount; set => _hpCount = value; }
+        public int hpCount { get => _hpCount; set{ } }
         /// <summary>
         /// 공격 가능여부 > 외부에서 변동해야함
         /// </summary>
@@ -74,7 +75,7 @@ namespace MJ.Player
         /// <summary>
         /// 캐릭터가 살아있는지 체크용
         /// </summary>
-       public bool isLive;
+         public bool isLive;
         /// <summary>
         /// 캐릭터 컨트롤러에 넣을 벡터값 저장용
         /// </summary>
@@ -87,7 +88,11 @@ namespace MJ.Player
         /// 첫 입력과 실시간으로 바뀌는 입력값을 뺀 방향 벡터
         /// </summary>
         private Vector3 _direction;
-        
+        /// <summary>
+        /// 플레이어의 트랜스폼
+        /// </summary>
+        private Transform _playerTransform;
+
         [SerializeField]private int _hpCount;
         /// <summary>
         /// 캐릭터가 땅에 닿았는지 체크하는 용도
@@ -99,20 +104,21 @@ namespace MJ.Player
         [SerializeField] private Transform[] _respawnPoint;
 
         [SerializeField]private State _currentState;
-        private bool _invisible = false;
-        private bool _isMove;
+        [SerializeField]private bool _invisible = false;
         [SerializeField]private bool _canAttack = false;
-        //
+        /// <summary>
+        /// 데미지를 입었는지 체크 용도
+        /// </summary>
         public bool _damaged;
-        //
         Animator _animator;
-
-        //처음 스타트용
-        private float _startTime;
-        //지속 시간
+        /// <summary>
+        /// 지속시간
+        /// </summary>
         [SerializeField]private float _durationTime;
-        //지속 시간 갱신용
-        private bool _whileDuration;
+        /// <summary>
+        /// 지속 시간 갱신용
+        /// </summary>
+        private bool _whileDuration = true;
         private void Awake()
         {
             _characterController = GetComponent<CharacterController>();
@@ -122,19 +128,15 @@ namespace MJ.Player
             _animator = GetComponent<Animator>();
             
             _hpCount = 0;
+
+            _playerTransform = GetComponent<Transform>();
         }
         private void Update()
         {
-            //이동
-           // MoveConditionCheck();
             CurrentPosition();
-            switchStateUpdate(currentState);
             IsJump();
+            Debug.Log(currentState.ToString());
             StateCheck();
-
-            //IsIdle();
-            //IsLive();
-            //IsMove();
         }
         /// <summary>
         /// 상태 변경시 업데이트용 함수
@@ -147,30 +149,26 @@ namespace MJ.Player
                 case State.Idle:
                     //Idle 애니메이션 추가
                     _animator.Play("IdleA");
-                    break;//정지 상태일 때는 startposition을 다시 초기화 시켜준다. 
+                    break;
                 case State.Move:
                     //Move 애니메이션 추가
-                    MoveConditionCheck();
                     _animator.Play("Run");
-                    break;//움직일 때는 애니메이션을 실행 하고 움직이는 함수를 실행
+                    break;
                 case State.Attack:
                     //Attack 애니메이션 추가
                     //함수 딜레이 용으로 공격, 애니메이션 추가 (추후 수정요구)
+                    _animator.Play("ATK1");
                     Debug.Log("Animation play called");
                     //Attack();
-                    break;//공격 할 때는 일정시간 동안 움직일 수 없고 일정시간 동안 공격할 수 없으며 일정 시간 후 움직일 수 있다.
+                    break;
                 case State.Damage:
                     //Damage 애니메이션 추가
-                    ++_hpCount;
-                    _animator.Play("Damage");
-                    break;//데미지를 입을 때 움직일 수 없고,이 곳에서 피격 판정을 실행하고 일정 시간동안 타격 당할 수 없으며 일정 시간 후 움직일 수 있다. 
+                    DamageHP();
+                    break;
                 case State.Death:
                     //Death 애니메이션 추가
-                    transform.position = _respawnPoint[0].position;
                     _animator.Play("DieA");
-                    hpCount = 0;
-                    Invoke("ResetIdle", 2f);
-                    break;//현재 상태가 죽은 상태면 애니메이션을 실행하고 움직일 수 없고 피격당할 수 없고. 타격 할 수 없다. 리스폰 시간의 시간 후에 정해진 위치로 텔레포트 한다.
+                    break;
             }
         }
         /// <summary>
@@ -197,145 +195,146 @@ namespace MJ.Player
             CheckDirection();
             transform.localRotation *= Quaternion.Euler(0f, -_direction.normalized.x * _rotateSpeed * Time.deltaTime, 0f);
         }
-        //1.일정시간동안 움직임이 멈추는 함수 
-        //2.일정시간동안 타격이 안되는 함수
-        //3.일정시간동안 피격이 안되는 함수
 
-        //1.움직이는지 아닌지
-        //2.공격하는지
-        //3.살아있는지 죽어있는지
 
-        private void StateCheck()
+        /// <summary>
+        /// 리스폰을 담당하는 기능적 함수 따로 적는 이유는 FixedUpdate에서 진행해야 할 함수이기 때문에 따로 잡아둠
+        /// </summary>
+        private void Respawn()
+        {
+            RespawnPlayer();
+            StartCoroutine(ChangeIdle());
+            ResetHP();
+        }
+        /// <summary>
+        /// 플레이어를 리스폰 지역의 포지션으로 옮기는 함수
+        /// </summary>
+        private void RespawnPlayer()
+        {
+            _playerTransform.position = _respawnPoint[0].position;
+        }
+        /// <summary>
+        /// 플레이어의 체력에 일정한 딜레이를 가지고 데미지를 주는 함수
+        /// </summary>
+        private void DamageHP() 
+        {
+            if (!_invisible)
+            {
+                return;
+            }//무적판정일 때 예외를 주는 함수
+            StartCoroutine(AttackDelay());
+            _hpCount++;
+            _animator.Play("Damage");
+        }
+        /// <summary>
+        /// 죽음 상태 이후 체력을 초기화 시켜주는 함수 
+        /// </summary>
+        private void ResetHP()
+        {
+            _hpCount = 0;
+        }
+        public void StateCheck()
         {
             if (isLive)
             {
                 if (!_damaged)
                 {
-                    StartCoroutine("CheckTime");
-                    _damaged = true;
-                    if (_whileDuration)
-                    {
-                        _currentState = State.Damage;
-                    }
-                }//데미지를 입었을 때
+                    return;
+                }
+
+                if (_canAttack)
+                {
+                    _currentState = State.Attack;
+                    switchStateUpdate(currentState);
+                }//공격이 가능할 때
                 else
                 {
-                    if (_canAttack)
-                    {
-                        _currentState = State.Attack;
-                    }//공격이 가능할 때
-                    else
-                    {
-                        if (_onTouching)
-                        {
-                            _currentState = State.Move;
-                            return;
-                        }//입력이 있을 때
-                        else
-                        {
-                            _currentState = State.Idle;
-                            return;
-                        }//입력이 없을 때
-                    }
+                    IsMove();
                 }
+                
             }//살아있을 때
             else
             {
                 _currentState = State.Death;
+                switchStateUpdate(currentState);
             }//죽어 있을 때
         }
-        
-        IEnumerator CheckTime()
+        /// <summary>
+        /// fixedUpdate에서 돌아가야해서 여기다가 넣음 수정 요망 TODO 
+        /// </summary>
+        private void FixedUpdate()
         {
-            
-            while (true)
+            if(!isLive)
             {
-                _whileDuration = true;
-                _startTime = 0.0f;
-                _startTime += Time.deltaTime;
-
-                if (_startTime == _durationTime)
-                {
-                    break;
-                }
-                yield return Time.deltaTime;
+                Respawn();
             }
-            _whileDuration = false;
-            yield return null;
         }
-        ///// <summary>
-        ///// 피격이 안되는지 확인여부
-        ///// </summary>
-        //private void BeInvisible()
-        //{
-        //    _invisible = true;
-        //}
-        //private void ResetIdle()
-        //{
-        //    currentState = State.Idle;
-        //    isLive = true;
-        //}
-        //private void IsIdle()
-        //{
-        //    _invisible = false;
-        //    if (_onTouching || !isLive || _damaged)
-        //    {
-        //        return;
-        //    }
-        //    _currentState = State.Idle;
-        //}
-        ///// <summary>
-        ///// 생존 여부 체크용 함수
-        ///// </summary>
-        //public void IsLive()
-        //{
-        //    if (hpCount == 2)
-        //    {
-        //        isLive = false;
-        //        _currentState = State.Death;
-        //    }
-            
-            
-        //}
-        ///// <summary>
-        ///// 움직임 여부 체크용 함수
-        ///// </summary>
-        //private void IsMove()
-        //{
-        //    if (!_onTouching || _damaged ||!isLive)
-        //    {
-        //        return;
-        //    }
-        //    _currentState = State.Move;
-        //}
-        
-        //public void IsAttack()
-        //{
-        //    _currentState = State.Attack;
-        //}
-        //public void IsDamaged()
-        //{
-        //    if(_invisible || _damaged || !isLive)
-        //    {
-        //        return;
-        //    }
-        //    _currentState = State.Damage;
-        //}
+        /// <summary>
+        /// 데미지를 입었을 때 호출하는 함수
+        /// 
+        /// state를 duration시간동안 데미지로 변경함
+        /// </summary>
+        public void IsDamaged()
+        {
+            if (!_damaged)
+            {
+                return;
+            }//중복 데미지의 예외사항
 
-        //private void Attack()
-        //{
-        //    if (!_canAttack) return;
+            _currentState = State.Damage;
+            switchStateUpdate(this.currentState);
+        }
+        /// <summary>
+        /// 죽음상태 이 후 FixedUpdate에서 Idle 상태로 _durationTime만큼의 딜레이 후 Idle상태로 변환
+        /// </summary>
+        /// <returns></returns>
+        IEnumerator ChangeIdle()
+        {
+            yield return new WaitForSeconds(_durationTime);
+            isLive = true;
+            _currentState = State.Idle;
+            switchStateUpdate(currentState);
+        }
 
-        //    currentState = State.Attack;
-        //    _canAttack = false;
-        //    Invoke("AttackDelay", 1.0f);
-        //}
+        IEnumerator AttackDelay()
+        {
+            _invisible = true;
+            yield return new WaitForSeconds(_attackDelay);
+            _invisible = false;
+        }
+        /// <summary>
+        /// 움직임을 체크해서 State를 변경하는 함수 (Move, Idle)
+        /// </summary>
+        void IsMove()
+        {
+            if (_onTouching)
+            {
+                _currentState = State.Move;
+                MoveConditionCheck();
+                switchStateUpdate(this.currentState);
 
-        //private void AttackDelay()
-        //{
-        //    _canAttack = true;
-        //    //currentState = State.Idle;
-        //}
+            }//입력이 있을 때
+            else
+            {
+                _currentState = State.Idle;
+                switchStateUpdate(this.currentState);
+
+            }
+            Debug.Log(_onTouching);
+        }
+        /// <summary>
+        /// 지속 시간 체크용 코루틴 함수
+        /// </summary>
+        /// <param name="result">거짓으로 됬다가 5초 뒤에 참으로 바뀜</param>
+        /// <returns></returns>
+        IEnumerator CheckTime(Action<bool> result)
+        {
+            bool check = false;
+            result(check);
+            yield return new WaitForSeconds(_durationTime);
+            bool checklater = true;
+            result(checklater);
+        }
 
         /// <summary>
         /// 입력 할 벡터 값을 리턴해주는 함수
@@ -367,6 +366,7 @@ namespace MJ.Player
             Jump();
             Move();
             Rotate();
+            switchStateUpdate(this.currentState);
         }
         /// <summary>
         /// 전진 후진에 대입할 벡터값을 구하는 함수
@@ -377,7 +377,6 @@ namespace MJ.Player
             CheckDirection();
             move += (-(transform.right * _direction.x) + -(transform.forward * _direction.y)).normalized * _moveSpeed;
             _moveVector = InputVector(move);
-            Debug.Log(move);
         }
         /// <summary>
         /// 점프할 때 대입할 벡터값을 구하는 함수
@@ -455,6 +454,7 @@ namespace MJ.Player
             }
             if (context.performed)
             {
+                _onTouching = true;
             }
             //땠을 때
             if (context.canceled)

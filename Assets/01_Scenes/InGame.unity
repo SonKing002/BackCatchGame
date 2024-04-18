@@ -37563,11 +37563,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   _attackDelay: 0
-  isLive: 0
+  isLive: 1
   _hpCount: 0
   _respawnPoint: []
   _currentState: 0
-  _damaged: 0
+  _canAttack: 0
+  _damaged: 1
   _durationTime: 0
 --- !u!114 &1933117483
 MonoBehaviour:
@@ -37730,7 +37731,7 @@ MonoBehaviour:
   _distance: 3.03
   _enemyTeamMask:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 0
   _obstacleMask:
     serializedVersion: 2
     m_Bits: 8
@@ -37776,7 +37777,7 @@ MonoBehaviour:
   _distance: 3.03
   _enemyTeamMask:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 0
   _obstacleMask:
     serializedVersion: 2
     m_Bits: 8
@@ -37832,12 +37833,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   _attackDelay: 0
-  isLive: 0
+  isLive: 1
   _hpCount: 0
   _respawnPoint: []
   _currentState: 0
-  _damaged: 0
-  _durationTime: 0
+  _canAttack: 0
+  _damaged: 1
+  _durationTime: 2
 --- !u!114 &1934482840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39280,11 +39282,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   _attackDelay: 0
-  isLive: 0
+  isLive: 1
   _hpCount: 0
   _respawnPoint: []
   _currentState: 0
-  _damaged: 0
+  _canAttack: 0
+  _damaged: 1
   _durationTime: 0
 --- !u!114 &2009958293
 MonoBehaviour:
@@ -45259,14 +45262,15 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  _attackDelay: 2.54
+  _attackDelay: 3
   isLive: 1
   _hpCount: 0
   _respawnPoint:
   - {fileID: 2105282628}
   _currentState: 0
-  _damaged: 0
-  _durationTime: 3
+  _canAttack: 0
+  _damaged: 1
+  _durationTime: 1
 --- !u!114 &8818352946020915886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -45410,7 +45414,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _invisibleTime: 2
   _respawnTime: 0
-  _backAngle: 50
+  _backAngle: 93
   _distance: 4
   _enemyTeamMask:
     serializedVersion: 2

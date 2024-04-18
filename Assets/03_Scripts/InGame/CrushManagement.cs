@@ -120,22 +120,15 @@ public class CrushManagement : MonoBehaviour
                 if (_vulnerable && _hitTargetList.Contains(Enemy) && Physics.Raycast(myPosition, targetDir, _attackDistance, _enemyTeamMask))
                 {
                     _enemyPlayerController.canAttack = true;
+                    _playerController.IsDamaged();
                     //죽었거나 데미지를 입을 때는 중복 데미지 체크 적이 공격 가능한 상태인가
-                    if (_playerController.currentState == State.Death || !_enemyPlayerController.canAttack || _playerController._damaged == true)
-                    {
-                        return;
-                    }
+
                     if (_playerController.hpCount >= 2)
                     {
                         _playerController.isLive = false;
-                        _playerController.switchStateUpdate(_playerController.currentState);
                         return;
                     }
-                    _playerController._damaged = true;
-                    Invoke("Damaged", _invisibleTime);
                 }
-                //2대 맞는다면...
-                
             }
         }
     }
@@ -162,11 +155,7 @@ public class CrushManagement : MonoBehaviour
         Debug.DrawRay(myPosition, leftDir * _distance, Color.black);
         Debug.DrawRay(myPosition, lookDir * _distance, Color.yellow);
     }
-    void Damaged()
-    {
-        _playerController._damaged = false;
-    }
-        //각도를 벡터값으로 바꿔주는 함수
+    //각도를 벡터값으로 바꿔주는 함수
         Vector3 AngleToDir(float angle)
     {
         //각도를 라디안으로 반환하고.
